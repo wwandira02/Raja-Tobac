@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="id" data-mode="light" data-color="gold">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>RAJA TOBACCO — Sistem Manajemen Usaha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   RAJA TOBACCO — Design Tokens
+   Subject: multi-branch tobacco-rolling wholesale/retail trade.
+   Palette drawn from cured tobacco leaf, ember, brass ledger tones —
+   not generic SaaS. Five selectable accent themes + light/dark.
+========================================================= */
+:root{
+  --font-ui:'Manrope',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-display:'Sora',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --radius-s:8px; --radius-m:12px; --radius-l:18px;
+  --shadow-1: 0 1px 2px rgba(20,14,8,.06), 0 1px 1px rgba(20,14,8,.04);
+  --shadow-2: 0 8px 24px -8px rgba(20,14,8,.18);
+  --ease: cubic-bezier(.4,0,.2,1);
+}
+/* ---- Color themes (accent hue changes per theme) ---- */
+html[data-color="gold"]{ --accent:#B8863B; --accent-ink:#5C3F14; --accent-soft:#F4E7CC; --accent-2:#8A5A22; }
+html[data-color="emerald"]{ --accent:#1F8A5B; --accent-ink:#0E4A31; --accent-soft:#D6EEE1; --accent-2:#146B45; }
+html[data-color="blue"]{ --accent:#2A5FA8; --accent-ink:#173A6B; --accent-soft:#DCE7F6; --accent-2:#1E4880; }
+html[data-color="purple"]{ --accent:#6A4B9C; --accent-ink:#3D2A63; --accent-soft:#E6DEF3; --accent-2:#4F3777; }
+html[data-color="red"]{ --accent:#B23A34; --accent-ink:#6B211D; --accent-soft:#F4DBD9; --accent-2:#8A2C27; }
+
+html[data-mode="light"]{
+  --bg:#F7F3EC; --bg-2:#FFFFFF; --surface:#FFFFFF; --surface-2:#F1EADC;
+  --ink:#241B10; --ink-soft:#5B4E3E; --ink-mute:#8B7E6C;
+  --border:#E7DDC9; --border-soft:#F0E8D8;
+  --success:#1F8A5B; --warn:#B8863B; --danger:#B23A34;
+  --tint:linear-gradient(180deg, rgba(184,134,59,.06), rgba(184,134,59,0));
+}
+html[data-mode="dark"]{
+  --bg:#171009; --bg-2:#1E1610; --surface:#211811; --surface-2:#2A1F16;
+  --ink:#F3EADA; --ink-soft:#CDBEA6; --ink-mute:#8F8271;
+  --border:#3A2C1D; --border-soft:#2C2114;
+  --success:#3CB37B; --warn:#D6A85C; --danger:#DD6259;
+  --tint:linear-gradient(180deg, rgba(184,134,59,.10), rgba(184,134,59,0));
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-ui); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{ font-family:var(--font-display); margin:0; letter-spacing:-.01em; }
+button{font-family:inherit;}
+::selection{ background:var(--accent-soft); }
+a{color:inherit;}
+::-webkit-scrollbar{width:9px;height:9px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+/* ---------- Utility ---------- */
+.hidden{display:none !important;}
+.row{display:flex; align-items:center;}
+.between{justify-content:space-between;}
+.gap-8{gap:8px;} .gap-12{gap:12px;} .gap-16{gap:16px;}
+.muted{color:var(--ink-mute);}
+.soft{color:var(--ink-soft);}
+.badge{display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:99px; font-size:12px; font-weight:700;}
+.badge.ok{ background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); }
+.badge.warn{ background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
+.badge.danger{ background:color-mix(in srgb, var(--danger) 16%, transparent); color:var(--danger); }
+.badge.neutral{ background:var(--surface-2); color:var(--ink-soft); }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  padding:9px 16px; border-radius:var(--radius-s); border:1px solid var(--border);
+  background:var(--surface); color:var(--ink); font-weight:700; font-size:13.5px;
+  cursor:pointer; transition:transform .12s var(--ease), background .15s, border-color .15s;
+  white-space:nowrap;
+}
+.btn:hover{ border-color:var(--accent); }
+.btn:active{ transform:scale(.97); }
+.btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.btn.primary:hover{ background:var(--accent-2); border-color:var(--accent-2); }
+.btn.danger{ color:var(--danger); border-color:color-mix(in srgb, var(--danger) 40%, var(--border)); }
+.btn.danger:hover{ background:color-mix(in srgb, var(--danger) 10%, transparent); }
+.btn.ghost{ border-color:transparent; background:transparent; }
+.btn.ghost:hover{ background:var(--surface-2); }
+.btn.sm{ padding:6px 11px; font-size:12.5px; border-radius:7px; }
+.btn.icon{ padding:8px; width:36px; height:36px; }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+.card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); box-shadow:var(--shadow-1); }
+.pad-16{padding:16px;} .pad-20{padding:20px;}
+
+input,select,textarea{
+  font-family:inherit; font-size:13.5px; padding:9px 12px; border-radius:var(--radius-s);
+  border:1px solid var(--border); background:var(--bg-2); color:var(--ink); width:100%;
+  transition:border-color .15s;
+}
+input:focus,select:focus,textarea:focus{ border-color:var(--accent); }
+label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:5px; }
+.field{margin-bottom:12px;}
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.check-row{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.check-row input{width:auto;}
+
+table{ width:100%; border-collapse:collapse; font-size:13px; }
+thead th{
+  text-align:left; padding:10px 12px; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--ink-mute); border-bottom:1px solid var(--border); white-space:nowrap; font-weight:800;
+  position:sticky; top:0; background:var(--surface); z-index:1;
+}
+tbody td{ padding:11px 12px; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+tbody tr:hover{ background:var(--surface-2); }
+.table-wrap{ overflow:auto; max-height:100%; border-radius:var(--radius-m); border:1px solid var(--border); }
+.empty-state{ text-align:center; padding:48px 20px; color:var(--ink-mute); }
+.empty-state .glyph{ font-size:34px; margin-bottom:10px; opacity:.6;}
+
+/* ---------- Login ---------- */
+#login-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+  background:
+    radial-gradient(1200px 600px at 15% -10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent),
+    var(--bg);
+}
+.login-box{ width:100%; max-width:380px; }
+.login-mark{ display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+.login-mark .glyph{
+  width:46px; height:46px; border-radius:12px; background:var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; font-size:19px;
+}
+.login-mark .name{ font-family:var(--font-display); font-weight:800; font-size:19px; letter-spacing:-.01em; }
+.login-mark .tag{ font-size:11.5px; color:var(--ink-mute); letter-spacing:.03em; }
+.login-card{ padding:26px; }
+.login-hint{
+  margin-top:16px; padding:12px 14px; border-radius:var(--radius-s); background:var(--surface-2);
+  font-size:12.5px; color:var(--ink-soft); line-height:1.6;
+}
+.login-err{ color:var(--danger); font-size:13px; margin-top:10px; display:none; }
+
+/* ---------- App shell ---------- */
+#app{ display:none; height:100vh; overflow:hidden; }
+#app.active{ display:flex; }
+.sidebar{
+  width:230px; flex:none; background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; transition:width .18s var(--ease);
+}
+.sidebar.collapsed{ width:72px; }
+.side-head{ display:flex; align-items:center; gap:10px; padding:18px 16px; border-bottom:1px solid var(--border); }
+.side-head .glyph{ width:34px; height:34px; border-radius:9px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; flex:none;}
+.side-head .txt{ overflow:hidden; }
+.side-head .name{ font-family:var(--font-display); font-weight:800; font-size:14.5px; white-space:nowrap; }
+.side-head .sub{ font-size:10.5px; color:var(--ink-mute); white-space:nowrap; }
+.sidebar.collapsed .txt{ display:none; }
+.nav{ flex:1; overflow-y:auto; padding:10px; }
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:9.5px 12px; border-radius:var(--radius-s);
+  cursor:pointer; color:var(--ink-soft); font-weight:700; font-size:13.5px; margin-bottom:2px;
+  white-space:nowrap; overflow:hidden;
+}
+.nav-item .ic{ flex:none; width:18px; text-align:center; }
+.nav-item:hover{ background:var(--surface-2); color:var(--ink); }
+.nav-item.active{ background:var(--accent); color:#fff; }
+.sidebar.collapsed .nav-item span.lbl{ display:none; }
+.nav-section-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-mute); padding:14px 12px 6px; font-weight:800; }
+.sidebar.collapsed .nav-section-label{ display:none; }
+.side-foot{ padding:12px; border-top:1px solid var(--border); }
+.branch-pill{
+  display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:var(--radius-s);
+  background:var(--surface-2); font-size:12px; font-weight:700; margin-bottom:8px; overflow:hidden; white-space:nowrap;
+}
+.user-pill{ display:flex; align-items:center; gap:9px; }
+.avatar{ width:30px; height:30px; border-radius:99px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12.5px; flex:none; }
+.sidebar.collapsed .user-pill .u-txt, .sidebar.collapsed .branch-pill span.lbl{ display:none; }
+
+.main{ flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar{
+  height:60px; flex:none; display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; border-bottom:1px solid var(--border); background:var(--surface);
+  gap:16px;
+}
+.topbar .left{ display:flex; align-items:center; gap:12px; min-width:0; }
+.page-title{ font-family:var(--font-display); font-weight:800; font-size:18px; white-space:nowrap; }
+.gsearch{ position:relative; width:280px; max-width:36vw; }
+.gsearch input{ padding-left:32px; }
+.gsearch .ic{ position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--ink-mute); font-size:13px; }
+.topbar .right{ display:flex; align-items:center; gap:10px; }
+.content{ flex:1; overflow-y:auto; padding:20px; }
+
+.theme-pop{ position:relative; }
+.theme-menu{
+  position:absolute; right:0; top:calc(100% + 8px); width:230px; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-m); box-shadow:var(--shadow-2); padding:12px; z-index:60; display:none;
+}
+.theme-menu.open{ display:block; }
+.theme-menu .grp-label{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-mute); font-weight:800; margin:6px 2px; }
+.mode-toggle{ display:flex; gap:6px; }
+.mode-toggle button{ flex:1; }
+.swatches{ display:flex; gap:8px; margin-top:6px;}
+.swatch{ width:28px; height:28px; border-radius:99px; cursor:pointer; border:2px solid transparent; }
+.swatch.active{ border-color:var(--ink); }
+.swatch[data-c="gold"]{background:#B8863B;} .swatch[data-c="emerald"]{background:#1F8A5B;}
+.swatch[data-c="blue"]{background:#2A5FA8;} .swatch[data-c="purple"]{background:#6A4B9C;} .swatch[data-c="red"]{background:#B23A34;}
+
+/* ---------- Dashboard ---------- */
+.grid-stats{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+.stat-card{ padding:16px; }
+.stat-card .top-row{ display:flex; justify-content:space-between; align-items:flex-start; }
+.stat-card .lbl{ font-size:12px; color:var(--ink-mute); font-weight:700; }
+.stat-card .val{ font-family:var(--font-display); font-size:22px; font-weight:800; margin-top:6px; }
+.stat-card .ic{ width:32px;height:32px;border-radius:9px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-size:15px;}
+.filters-bar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+.filters-bar select, .filters-bar input[type=date]{ width:auto; min-width:130px; }
+.section-title{ font-family:var(--font-display); font-weight:800; font-size:15.5px; margin:22px 0 12px; }
+.two-col{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
+.chart-wrap{ padding:16px; }
+.chart-wrap h3{ font-size:13.5px; margin-bottom:14px; }
+.list-widget .item{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:13px; }
+.list-widget .item:last-child{ border:none; }
+.list-widget .rank{ width:20px; height:20px; border-radius:6px; background:var(--surface-2); color:var(--ink-soft); font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-right:8px;}
+
+/* ---------- POS ---------- */
+#view-pos.pos-active{ position:fixed; inset:0; z-index:40; background:var(--bg); display:flex; flex-direction:column; }
+.pos-shell{ display:flex; height:100%; gap:0; }
+.pos-left{ flex:1.5; display:flex; flex-direction:column; border-right:1px solid var(--border); min-width:0; }
+.pos-right{ flex:1; display:flex; flex-direction:column; min-width:340px; max-width:420px; }
+.pos-topbar{ display:flex; gap:10px; padding:12px; border-bottom:1px solid var(--border); align-items:center; }
+.pos-search{ flex:1; position:relative; }
+.pos-search input{ padding:12px 14px 12px 38px; font-size:15px; border-radius:10px; }
+.pos-search .ic{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--ink-mute); }
+.cat-chips{ display:flex; gap:8px; padding:10px 12px; overflow-x:auto; border-bottom:1px solid var(--border); }
+.chip{ padding:6px 13px; border-radius:99px; background:var(--surface-2); font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; border:1px solid transparent; }
+.chip.active{ background:var(--accent); color:#fff; }
+.pos-fav-strip{ display:flex; gap:8px; padding:10px 12px; overflow-x:auto; }
+.fav-card{ flex:none; width:88px; padding:8px; border-radius:10px; background:var(--surface-2); text-align:center; cursor:pointer; font-size:11px; font-weight:700; }
+.pos-products{ flex:1; overflow-y:auto; padding:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; align-content:start; }
+.prod-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:11px; cursor:pointer; transition:transform .1s, border-color .1s; position:relative; }
+.prod-card:hover{ border-color:var(--accent); transform:translateY(-1px); }
+.prod-card .pname{ font-weight:800; font-size:12.5px; line-height:1.3; margin-bottom:4px; min-height:32px; }
+.prod-card .pbrand{ font-size:10.5px; color:var(--ink-mute); margin-bottom:6px;}
+.prod-card .pprice{ font-weight:800; color:var(--accent-ink); font-size:13.5px; }
+.prod-card .pstock{ font-size:10.5px; margin-top:4px; }
+.prod-card .qty-badge{ position:absolute; top:-6px; right:-6px; background:var(--accent); color:#fff; font-size:11px; font-weight:800; width:20px; height:20px; border-radius:99px; display:flex; align-items:center; justify-content:center; }
+
+.pos-cust-row{ display:flex; gap:8px; padding:12px; border-bottom:1px solid var(--border); }
+.pos-cart-head{ padding:12px 14px 6px; font-weight:800; font-size:13px; display:flex; justify-content:space-between;}
+.pos-cart{ flex:1; overflow-y:auto; padding:0 12px; }
+.cart-item{ display:flex; gap:8px; padding:10px 0; border-bottom:1px solid var(--border-soft); align-items:center; }
+.cart-item.selected{ background:var(--accent-soft); border-radius:8px; padding-left:6px; padding-right:6px; }
+.cart-item .ci-info{ flex:1; min-width:0; }
+.cart-item .ci-name{ font-weight:700; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cart-item .ci-price{ font-size:11px; color:var(--ink-mute); }
+.qty-ctrl{ display:flex; align-items:center; gap:4px; }
+.qty-ctrl button{ width:22px; height:22px; border-radius:6px; border:1px solid var(--border); background:var(--surface-2); cursor:pointer; font-weight:800;}
+.qty-ctrl input{ width:34px; text-align:center; padding:3px; font-size:12px; }
+.cart-item .ci-sub{ width:78px; text-align:right; font-weight:800; font-size:12.5px; }
+.cart-item .ci-del{ color:var(--danger); cursor:pointer; font-size:13px; padding:2px 4px;}
+.pos-note{ padding:10px 12px; }
+.pos-summary{ padding:14px; border-top:1px solid var(--border); background:var(--surface-2); }
+.sum-line{ display:flex; justify-content:space-between; font-size:13px; padding:3px 0; }
+.sum-line.total{ font-size:17px; font-weight:800; font-family:var(--font-display); padding-top:8px; margin-top:6px; border-top:1px dashed var(--border); }
+.pay-methods{ display:flex; gap:6px; margin:10px 0; }
+.pay-methods button{ flex:1; }
+.pay-methods button.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.cash-quick{ display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
+.cash-quick button{ flex:1; min-width:64px; }
+.pos-actions{ display:flex; gap:8px; margin-top:10px; }
+.pos-actions .btn{ flex:1; }
+.kbd{ display:inline-block; padding:1px 6px; border-radius:5px; background:var(--surface-2); border:1px solid var(--border); font-size:10.5px; font-family:monospace; }
+
+/* ---------- Modal ---------- */
+.modal-backdrop{ position:fixed; inset:0; background:rgba(20,14,8,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+.modal-backdrop.open{ display:flex; }
+.modal{ background:var(--surface); border-radius:var(--radius-l); width:100%; max-width:520px; max-height:88vh; display:flex; flex-direction:column; box-shadow:var(--shadow-2); }
+.modal.wide{ max-width:760px; }
+.modal-head{ padding:18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.modal-head h3{ font-size:16.5px; }
+.modal-body{ padding:20px; overflow-y:auto; }
+.modal-foot{ padding:16px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; }
+.close-x{ cursor:pointer; font-size:18px; color:var(--ink-mute); background:none; border:none; padding:4px;}
+
+/* ---------- Toast ---------- */
+#toast-host{ position:fixed; bottom:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:8px; }
+.toast{ background:var(--ink); color:var(--bg); padding:12px 16px; border-radius:10px; font-size:13px; font-weight:700; box-shadow:var(--shadow-2); display:flex; align-items:center; gap:8px; animation:toast-in .25s var(--ease); max-width:320px; }
+html[data-mode="dark"] .toast{ background:var(--surface-2); color:var(--ink); border:1px solid var(--border);}
+.toast.success{ border-left:4px solid var(--success); }
+.toast.error{ border-left:4px solid var(--danger); }
+.toast.info{ border-left:4px solid var(--accent); }
+@keyframes toast-in{ from{ opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+
+/* ---------- Tabs / misc ---------- */
+.tabs{ display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:16px; overflow-x:auto;}
+.tab{ padding:10px 14px; font-weight:700; font-size:13px; cursor:pointer; color:var(--ink-mute); border-bottom:2px solid transparent; white-space:nowrap;}
+.tab.active{ color:var(--accent-ink); border-color:var(--accent); }
+.pagination{ display:flex; justify-content:space-between; align-items:center; padding:10px 4px; font-size:12.5px; color:var(--ink-mute); }
+.pagination .btns{ display:flex; gap:6px; }
+.toolbar{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.toolbar .grow{ flex:1; min-width:180px; }
+.access-denied{ text-align:center; padding:80px 20px; color:var(--ink-mute); }
+.progress-mini{ height:6px; border-radius:99px; background:var(--surface-2); overflow:hidden; margin-top:6px;}
+.progress-mini > div{ height:100%; background:var(--accent); }
+.kv{ display:grid; grid-template-columns:130px 1fr; gap:6px 10px; font-size:13px; }
+.kv .k{ color:var(--ink-mute); }
+.mobile-toggle{ display:none; }
+@media (max-width: 880px){
+  .sidebar{ position:fixed; z-index:70; height:100%; left:-240px; transition:left .2s var(--ease); }
+  .sidebar.mobile-open{ left:0; }
+  .mobile-toggle{ display:inline-flex; }
+  .two-col{ grid-template-columns:1fr; }
+  .pos-shell{ flex-direction:column; }
+  .pos-right{ max-width:none; min-width:0; }
+  .field-row{ grid-template-columns:1fr; }
+  .gsearch{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================= LOGIN ============================= -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-mark">
+      <div class="glyph">RT</div>
+      <div>
+        <div class="name">RAJA TOBACCO</div>
+        <div class="tag">SISTEM PENCATATAN INTERNAL</div>
+      </div>
+    </div>
+    <div class="card login-card">
+      <h3 style="margin-bottom:4px;">Masuk ke akun Anda</h3>
+      <p class="muted" style="font-size:12.5px; margin:0 0 18px;">Gunakan akun Owner atau Staff Kasir.</p>
+      <div class="field">
+        <label>Username</label>
+        <input id="login-user" type="text" placeholder="owner / kasir" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn primary" style="width:100%; padding:11px;" onclick="doLogin()">Masuk</button>
+      <div class="login-err" id="login-err">Username atau password salah.</div>
+      <div class="login-hint">
+        <b>Demo Owner:</b> owner / owner123<br>
+        <b>Demo Kasir:</b> kasir / kasir123
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= APP ============================= -->
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <div class="glyph">RT</div>
+      <div class="txt">
+        <div class="name">RAJA TOBACCO</div>
+        <div class="sub" id="branch-label-mini">Multi Cabang</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav-list"></nav>
+    <div class="side-foot">
+      <div class="branch-pill" id="branch-pill-active" onclick="openBranchSwitcher()" style="cursor:pointer;" title="Ganti cabang aktif">
+        <span>🏬</span><span class="lbl" id="branch-pill-text">—</span>
+      </div>
+      <div class="user-pill">
+        <div class="avatar" id="user-avatar">?</div>
+        <div class="u-txt" style="overflow:hidden;">
+          <div style="font-weight:800; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="user-name-lbl">—</div>
+          <div class="muted" style="font-size:11px;" id="user-role-lbl">—</div>
+        </div>
+        <button class="btn ghost icon sm" style="margin-left:auto;" title="Keluar" onclick="doLogout()">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="left">
+        <button class="btn ghost icon mobile-toggle" onclick="toggleMobileSidebar()">☰</button>
+        <button class="btn ghost icon" id="collapse-btn" onclick="toggleSidebar()" title="Ciutkan menu">⟨⟩</button>
+        <div class="page-title" id="page-title">Dashboard</div>
+      </div>
+      <div class="right">
+        <div class="gsearch">
+          <span class="ic">🔍</span>
+          <input type="text" id="global-search" placeholder="Cari produk, reseller, distributor…" oninput="globalSearch(this.value)">
+        </div>
+        <div class="theme-pop">
+          <button class="btn ghost icon" onclick="toggleThemeMenu()" title="Tampilan">🎨</button>
+          <div class="theme-menu" id="theme-menu">
+            <div class="grp-label">Mode</div>
+            <div class="mode-toggle">
+              <button class="btn sm" id="mode-light-btn" onclick="setMode('light')">☀ Light</button>
+              <button class="btn sm" id="mode-dark-btn" onclick="setMode('dark')">🌙 Dark</button>
+            </div>
+            <div class="grp-label">Tema Warna</div>
+            <div class="swatches" id="swatch-row"></div>
+          </div>
+        </div>
+        <button class="btn primary sm" onclick="go('pos')">⚡ POS Cepat</button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div id="toast-host"></div>
+<div class="modal-backdrop" id="modal-backdrop"><div class="modal" id="modal-box"></div></div>
+
+<script>
+/* =========================================================================================
+   RAJA TOBACCO — App Logic
+   Single-file SPA. Data persisted to localStorage under key "rt_db_v1".
+   ========================================================================================= */
+
+const DB_KEY = 'rt_db_v1';
+const SESSION_KEY = 'rt_session_v1';
+const DRAFT_KEY = 'rt_pos_draft_v1';
+
+function uid(prefix){ return prefix + '_' + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4); }
+function todayISO(){ return new Date().toISOString(); }
+function fmtIDR(n){ n = Math.round(n||0); return 'Rp ' + n.toLocaleString('id-ID'); }
+function fmtDateID(iso, withTime){
+  const d = new Date(iso);
+  const opt = { day:'2-digit', month:'short', year:'numeric' };
+  if(withTime){ opt.hour='2-digit'; opt.minute='2-digit'; }
+  return d.toLocaleDateString('id-ID', opt).replace(/\./g,'');
+}
+function escapeHtml(s){ return (s===undefined||s===null)?'':String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------------- Seed Data ---------------- */
+function seedData(){
+  const branches = [
+    { id:'br_belilas', name:'BELILAS', address:'Jl. Lintas Belilas No. 12', contact:'0812-7000-1001', pic:'Andi Wijaya', status:'active' },
+    { id:'br_pematang', name:'PEMATANG REBA', address:'Jl. Pasar Pematang Reba', contact:'0812-7000-1002', pic:'Siti Rahma', status:'active' },
+  ];
+  const users = [
+    { id:'u_owner', username:'owner', password:'owner123', name:'Bpk. Raja', role:'owner', status:'active', branchId:null },
+    { id:'u_kasir', username:'kasir', password:'kasir123', name:'Dewi Anjani', role:'kasir', status:'active', branchId:'br_belilas' },
+  ];
+  const categories = ['Tembakau','Busa','Kertas/Papir','Lem','Cetakan','Selongsong','Pipa','Kotak Rokok','Cengkeh'];
+  const brands = ['Jayana','Luxury','Mewah','Domino','Barack','JR Esse','Lintang Arjuna'];
+  const units = ['KG','1/2 ONS','ONS','BOX','PACK','PCS'];
+  const bstock = (a,b)=>({ br_belilas:a, br_pematang:b });
+  const products = [
+    { id:uid('p'), name:'Jayana Original', brand:'Jayana', category:'Tembakau', unit:'ONS', buyPrice:9000, sellPrice:13000, minStock:20, stock:bstock(45,30), description:'Tembakau rajangan halus.', favorite:true, status:'active' },
+    { id:uid('p'), name:'Jayana Premium', brand:'Jayana', category:'Tembakau', unit:'ONS', buyPrice:12000, sellPrice:17000, minStock:15, stock:bstock(8,3), description:'Kualitas premium, aroma kuat.', favorite:true, status:'active' },
+    { id:uid('p'), name:'Jayana Luxury', brand:'Jayana', category:'Tembakau', unit:'ONS', buyPrice:15000, sellPrice:21000, minStock:10, stock:bstock(18,12), description:'Grade tertinggi Jayana.', favorite:true, status:'active' },
+    { id:uid('p'), name:'Luxury Gold', brand:'Luxury', category:'Tembakau', unit:'ONS', buyPrice:14000, sellPrice:19500, minStock:10, stock:bstock(22,9), description:'', favorite:true, status:'active' },
+    { id:uid('p'), name:'Domino Classic', brand:'Domino', category:'Tembakau', unit:'ONS', buyPrice:8000, sellPrice:12000, minStock:20, stock:bstock(60,40), description:'', favorite:true, status:'active' },
+    { id:uid('p'), name:'Barack Super', brand:'Barack', category:'Tembakau', unit:'1/2 ONS', buyPrice:5000, sellPrice:7500, minStock:25, stock:bstock(0,14), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Mewah Spesial', brand:'Mewah', category:'Tembakau', unit:'KG', buyPrice:85000, sellPrice:120000, minStock:5, stock:bstock(9,4), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Papir OCB Slim', brand:'Lintang Arjuna', category:'Kertas/Papir', unit:'PACK', buyPrice:6000, sellPrice:9000, minStock:15, stock:bstock(40,28), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Papir Raw Klasik', brand:'Lintang Arjuna', category:'Kertas/Papir', unit:'PACK', buyPrice:7000, sellPrice:10500, minStock:15, stock:bstock(5,20), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Busa Filter Standar', brand:'JR Esse', category:'Busa', unit:'PACK', buyPrice:3000, sellPrice:5000, minStock:30, stock:bstock(70,55), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Lem Kertas Rokok', brand:'JR Esse', category:'Lem', unit:'PCS', buyPrice:2000, sellPrice:3500, minStock:20, stock:bstock(33,17), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Cetakan Manual', brand:'Domino', category:'Cetakan', unit:'PCS', buyPrice:15000, sellPrice:25000, minStock:5, stock:bstock(6,2), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Selongsong Reguler', brand:'Barack', category:'Selongsong', unit:'BOX', buyPrice:18000, sellPrice:27000, minStock:8, stock:bstock(11,0), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Pipa Kayu Klasik', brand:'Mewah', category:'Pipa', unit:'PCS', buyPrice:22000, sellPrice:35000, minStock:5, stock:bstock(4,7), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Kotak Rokok Kaleng', brand:'Luxury', category:'Kotak Rokok', unit:'PCS', buyPrice:9000, sellPrice:15000, minStock:10, stock:bstock(14,19), description:'', favorite:false, status:'active' },
+    { id:uid('p'), name:'Cengkeh Kering', brand:'Mewah', category:'Cengkeh', unit:'KG', buyPrice:95000, sellPrice:130000, minStock:5, stock:bstock(3,6), description:'', favorite:false, status:'active' },
+  ];
+  const distributors = [
+    { id:uid('d'), name:'NAGAYA', contact:'0813-9911-2233', address:'Pekanbaru, Riau', mainProduct:'Tembakau & Papir', branchId:'br_belilas', status:'active' },
+    { id:uid('d'), name:'LINTANG ARJUNA', contact:'0813-4455-6677', address:'Kediri, Jawa Timur', mainProduct:'Papir & Aksesoris', branchId:'br_pematang', status:'active' },
+    { id:uid('d'), name:'BELILAS', contact:'0812-1122-3344', address:'Belilas, Indragiri Hulu', mainProduct:'Tembakau Lokal', branchId:'br_belilas', status:'active' },
+  ];
+  const resellers = [
+    { id:uid('rs'), name:'Toko Berkah Jaya', contact:'0821-1111-2222', address:'Pasar Belilas Blok C', branchId:'br_belilas', status:'active' },
+    { id:uid('rs'), name:'Kios Anugerah', contact:'0821-3333-4444', address:'Simpang Pematang Reba', branchId:'br_pematang', status:'active' },
+  ];
+  return { branches, users, categories, brands, units, products, distributors, resellers, sales:[], purchases:[], stockHistory:[],
+    settings:{
+      companyName:'RAJA TOBACCO', logo:'', address:'Jl. Lintas Timur, Indragiri Hulu, Riau', phone:'0812-7000-0000',
+      email:'info@rajatobacco.id', notes:'', defaultBranch:'br_belilas', lowStockNotif:true, backupNote:'',
+      theme:{ mode:'light', color:'gold' }
+    }
+  };
+}
+
+let DB = null;
+function loadDB(){
+  const raw = localStorage.getItem(DB_KEY);
+  if(raw){ try{ DB = JSON.parse(raw); }catch(e){ DB = seedData(); } }
+  else { DB = seedData(); }
+  if(!DB.settings) DB.settings = seedData().settings;
+  saveDB();
+}
+function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
+
+let SESSION = null;
+function loadSession(){ try{ SESSION = JSON.parse(sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY)); }catch(e){ SESSION=null; } }
+function saveSession(remember){
+  const s = JSON.stringify(SESSION);
+  sessionStorage.setItem(SESSION_KEY, s);
+  if(remember) localStorage.setItem(SESSION_KEY, s); else localStorage.removeItem(SESSION_KEY);
+}
+
+/* ---------------- Auth ---------------- */
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const user = DB.users.find(x=>x.username===u && x.password===p && x.status==='active');
+  const errEl = document.getElementById('login-err');
+  if(!user){ errEl.style.display='block'; return; }
+  errEl.style.display='none';
+  SESSION = { userId:user.id, activeBranch: user.role==='owner' ? (DB.settings.defaultBranch || DB.branches[0].id) : (user.branchId || DB.branches[0].id) };
+  saveSession(true);
+  enterApp();
+}
+function doLogout(){
+  sessionStorage.removeItem(SESSION_KEY); localStorage.removeItem(SESSION_KEY);
+  SESSION = null;
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-user').value=''; document.getElementById('login-pass').value='';
+}
+function currentUser(){ return DB.users.find(u=>u.id === (SESSION && SESSION.userId)); }
+function isOwner(){ const u=currentUser(); return u && u.role==='owner'; }
+
+/* ---------------- Theme ---------------- */
+function applyTheme(){
+  document.documentElement.setAttribute('data-mode', DB.settings.theme.mode);
+  document.documentElement.setAttribute('data-color', DB.settings.theme.color);
+  document.getElementById('mode-light-btn').classList.toggle('primary', DB.settings.theme.mode==='light');
+  document.getElementById('mode-dark-btn').classList.toggle('primary', DB.settings.theme.mode==='dark');
+  document.querySelectorAll('.swatch').forEach(s=> s.classList.toggle('active', s.dataset.c===DB.settings.theme.color));
+}
+function setMode(m){ DB.settings.theme.mode=m; saveDB(); applyTheme(); }
+function setColor(c){ DB.settings.theme.color=c; saveDB(); applyTheme(); }
+function toggleThemeMenu(){ document.getElementById('theme-menu').classList.toggle('open'); }
+document.addEventListener('click', (e)=>{
+  const pop = document.querySelector('.theme-pop');
+  if(pop && !pop.contains(e.target)) document.getElementById('theme-menu').classList.remove('open');
+});
+function initSwatches(){
+  const row = document.getElementById('swatch-row');
+  row.innerHTML = ['gold','emerald','blue','purple','red'].map(c=>`<div class="swatch" data-c="${c}" onclick="setColor('${c}')" title="${c}"></div>`).join('');
+}
+
+/* ---------------- Toast ---------------- */
+function toast(msg, type){
+  type = type || 'info';
+  const host = document.getElementById('toast-host');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const ic = type==='success'?'✓':type==='error'?'✕':'ℹ';
+  el.innerHTML = `<span>${ic}</span><span>${escapeHtml(msg)}</span>`;
+  host.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 300); }, 2600);
+}
+
+/* ---------------- Modal helper ---------------- */
+function openModal(html, wide){
+  document.getElementById('modal-box').className = 'modal' + (wide?' wide':'');
+  document.getElementById('modal-box').innerHTML = html;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-backdrop').classList.remove('open'); document.getElementById('modal-box').innerHTML=''; }
+document.getElementById('modal-backdrop').addEventListener('click', (e)=>{ if(e.target.id==='modal-backdrop') closeModal(); });
+function confirmAction(title, msg, onYes){
+  openModal(`
+    <div class="modal-head"><h3>${escapeHtml(title)}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body"><p style="margin:0;">${escapeHtml(msg)}</p></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Batal</button>
+      <button class="btn danger" id="confirm-yes-btn">Ya, Lanjutkan</button>
+    </div>`);
+  document.getElementById('confirm-yes-btn').onclick = ()=>{ closeModal(); onYes(); };
+}
+
+/* ---------------- Nav / routing ---------------- */
+const NAV = [
+  { section:'Utama', items:[
+    { id:'dashboard', label:'Dashboard', ic:'📊', roles:['owner','kasir'] },
+    { id:'pos', label:'POS / Kasir', ic:'🧾', roles:['owner','kasir'] },
+  ]},
+  { section:'Produk & Stok', items:[
+    { id:'produk', label:'Produk', ic:'📦', roles:['owner','kasir'] },
+    { id:'inventaris', label:'Inventaris', ic:'📋', roles:['owner','kasir'] },
+    { id:'pembelian', label:'Pembelian', ic:'🛒', roles:['owner'] },
+  ]},
+  { section:'Relasi Usaha', items:[
+    { id:'distributor', label:'Distributor', ic:'🚚', roles:['owner'] },
+    { id:'reseller', label:'Reseller', ic:'🤝', roles:['owner'] },
+    { id:'cabang', label:'Cabang', ic:'🏬', roles:['owner'] },
+  ]},
+  { section:'Laporan', items:[
+    { id:'laporan', label:'Laporan Keuangan', ic:'📈', roles:['owner'] },
+  ]},
+  { section:'Sistem', items:[
+    { id:'pengaturan', label:'Pengaturan', ic:'⚙', roles:['owner'] },
+  ]},
+];
+let currentView = 'dashboard';
+let posFullscreen = false;
+
+function renderNav(){
+  const u = currentUser();
+  const html = NAV.map(sec=>{
+    const items = sec.items.filter(it=> it.roles.includes(u.role));
+    if(!items.length) return '';
+    return `<div class="nav-section-label">${sec.section}</div>` + items.map(it=>
+      `<div class="nav-item ${currentView===it.id?'active':''}" onclick="go('${it.id}')"><span class="ic">${it.ic}</span><span class="lbl">${it.label}</span></div>`
+    ).join('');
+  }).join('');
+  document.getElementById('nav-list').innerHTML = html;
+}
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('collapsed'); }
+function toggleMobileSidebar(){ document.getElementById('sidebar').classList.toggle('mobile-open'); }
+
+function go(view){
+  const u = currentUser();
+  const allowed = NAV.some(s=> s.items.some(i=> i.id===view && i.roles.includes(u.role)));
+  if(!allowed){ toast('Anda tidak memiliki akses ke halaman ini', 'error'); return; }
+  currentView = view;
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.body.style.overflow = '';
+  document.getElementById('view-pos') && document.getElementById('view-pos').classList.remove('pos-active');
+  renderNav();
+  const titles = { dashboard:'Dashboard', pos:'POS / Kasir', produk:'Produk', inventaris:'Inventaris', pembelian:'Pembelian', distributor:'Distributor', reseller:'Reseller', cabang:'Cabang', laporan:'Laporan Keuangan', pengaturan:'Pengaturan' };
+  document.getElementById('page-title').textContent = titles[view] || '';
+  const content = document.getElementById('content');
+  content.scrollTop = 0;
+  if(view==='dashboard') content.innerHTML = renderDashboard();
+  else if(view==='pos') content.innerHTML = renderPOS();
+  else if(view==='produk') content.innerHTML = renderProduk();
+  else if(view==='inventaris') content.innerHTML = renderInventaris();
+  else if(view==='pembelian') content.innerHTML = renderPembelian();
+  else if(view==='distributor') content.innerHTML = renderDistributor();
+  else if(view==='reseller') content.innerHTML = renderReseller();
+  else if(view==='cabang') content.innerHTML = renderCabang();
+  else if(view==='laporan') content.innerHTML = renderLaporan();
+  else if(view==='pengaturan') content.innerHTML = renderPengaturan();
+
+  if(view==='pos'){ initPOS(); }
+  if(view==='dashboard'){ initDashboard(); }
+  if(view==='laporan'){ initLaporan(); }
+}
+
+/* ---------------- Branch helpers ---------------- */
+function activeBranchId(){ return SESSION.activeBranch; }
+function activeBranch(){ return DB.branches.find(b=>b.id===activeBranchId()); }
+function updateBranchPill(){
+  const b = activeBranch();
+  document.getElementById('branch-pill-text').textContent = b ? b.name : 'Semua Cabang';
+  document.getElementById('branch-label-mini').textContent = isOwner() ? 'Multi Cabang' : (b? b.name : '');
+}
+function openBranchSwitcher(){
+  if(!isOwner()){ toast('Hanya Owner yang dapat berpindah cabang', 'error'); return; }
+  const opts = DB.branches.filter(b=>b.status==='active').map(b=>
+    `<div class="nav-item ${b.id===activeBranchId()?'active':''}" style="margin-bottom:6px;" onclick="switchBranch('${b.id}')">🏬 <span class="lbl">${escapeHtml(b.name)}</span></div>`
+  ).join('');
+  openModal(`
+    <div class="modal-head"><h3>Pilih Cabang Aktif</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="nav-item ${activeBranchId()==='ALL'?'active':''}" style="margin-bottom:6px;" onclick="switchBranch('ALL')">🌐 <span class="lbl">Semua Cabang (Gabungan)</span></div>
+      ${opts}
+    </div>`);
+}
+function switchBranch(id){ SESSION.activeBranch = id; saveSession(true); updateBranchPill(); closeModal(); go(currentView); }
+
+function productStock(p, branchId){
+  if(branchId==='ALL') return Object.values(p.stock).reduce((a,b)=>a+b,0);
+  return p.stock[branchId] || 0;
+}
+function stockStatus(cur, min){ if(cur<=0) return 'habis'; if(cur<=min) return 'menipis'; return 'aman'; }
+
+/* ================================================================
+   DASHBOARD
+================================================================ */
+let dashFilter = { branch:'ALL', period:'month' };
+function periodRange(period, customFrom, customTo){
+  const now = new Date();
+  let from, to = new Date(now);
+  if(period==='today'){ from = new Date(now.getFullYear(),now.getMonth(),now.getDate()); }
+  else if(period==='week'){ const day = now.getDay()||7; from = new Date(now); from.setDate(now.getDate()-day+1); from.setHours(0,0,0,0); }
+  else if(period==='month'){ from = new Date(now.getFullYear(), now.getMonth(), 1); }
+  else if(period==='year'){ from = new Date(now.getFullYear(), 0, 1); }
+  else if(period==='custom'){ from = customFrom? new Date(customFrom): new Date(2000,0,1); to = customTo? new Date(customTo+'T23:59:59'): now; return {from,to}; }
+  else { from = new Date(2000,0,1); }
+  to.setHours(23,59,59,999);
+  return { from, to };
+}
+function filterSales(branch, period, cFrom, cTo){
+  const {from,to} = periodRange(period, cFrom, cTo);
+  return DB.sales.filter(s=>{
+    const d = new Date(s.date);
+    const branchOk = branch==='ALL' || s.branchId===branch;
+    return branchOk && d>=from && d<=to;
+  });
+}
+function salesTotal(list){ return list.reduce((a,s)=>a+s.total,0); }
+function salesProfit(list){
+  let p=0;
+  list.forEach(s=> s.items.forEach(it=>{
+    const prod = DB.products.find(x=>x.id===it.productId);
+    const buy = prod? prod.buyPrice : 0;
+    p += (it.price - buy) * it.qty - (it.discount||0);
+  }));
+  return p;
+}
+function itemsSoldCount(list){ return list.reduce((a,s)=> a + s.items.reduce((b,i)=>b+i.qty,0), 0); }
+
+function renderDashboard(){
+  const branchOpts = `<option value="ALL">Semua Cabang</option>` + DB.branches.map(b=>`<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+  return `
+  <div class="filters-bar">
+    <select id="dash-branch" onchange="dashFilter.branch=this.value; initDashboard();" ${isOwner()?'':'disabled'}>${branchOpts}</select>
+    <select id="dash-period" onchange="dashFilter.period=this.value; initDashboard();">
+      <option value="today">Hari Ini</option>
+      <option value="week">Minggu Ini</option>
+      <option value="month" selected>Bulan Ini</option>
+      <option value="year">Tahun Ini</option>
+      <option value="all">Semua</option>
+    </select>
+  </div>
+  <div class="grid-stats" id="dash-stats"></div>
+  <div class="two-col" style="margin-top:18px;">
+    <div class="card chart-wrap">
+      <h3>Penjualan per Hari (14 hari terakhir)</h3>
+      <div id="chart-daily"></div>
+    </div>
+    <div class="card chart-wrap">
+      <h3>Perbandingan Omset Antar Cabang</h3>
+      <div id="chart-branch"></div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card chart-wrap">
+      <h3>Produk Terlaris</h3>
+      <div id="widget-top-products" class="list-widget"></div>
+    </div>
+    <div class="card chart-wrap">
+      <h3>Peringatan Stok</h3>
+      <div id="widget-low-stock" class="list-widget"></div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card chart-wrap">
+      <h3>Penjualan Terbaru</h3>
+      <div id="widget-recent-sales" class="list-widget"></div>
+    </div>
+    <div class="card chart-wrap">
+      <h3>Pembelian Terbaru</h3>
+      <div id="widget-recent-purchases" class="list-widget"></div>
+    </div>
+  </div>`;
+}
+
+function initDashboard(){
+  if(!isOwner()) dashFilter.branch = activeBranchId();
+  document.getElementById('dash-branch').value = dashFilter.branch;
+  document.getElementById('dash-period').value = dashFilter.period;
+  const branch = dashFilter.branch, period = dashFilter.period;
+
+  const salesPeriod = filterSales(branch, period);
+  const salesToday = filterSales(branch,'today');
+  const salesWeek = filterSales(branch,'week');
+  const salesMonth = filterSales(branch,'month');
+  const salesYear = filterSales(branch,'year');
+  const purchasesMonth = DB.purchases.filter(p=>{ const d=new Date(p.date); const now=new Date(); return (branch==='ALL'||p.branchId===branch) && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+
+  const prodInBranch = DB.products.filter(p=>p.status==='active');
+  const totalStockQty = prodInBranch.reduce((a,p)=>a+productStock(p,branch),0);
+  const stockValue = prodInBranch.reduce((a,p)=>a+productStock(p,branch)*p.buyPrice,0);
+  const lowStock = prodInBranch.filter(p=> stockStatus(productStock(p,branch), p.minStock)==='menipis').length;
+  const outStock = prodInBranch.filter(p=> stockStatus(productStock(p,branch), p.minStock)==='habis').length;
+
+  const stats = [
+    { lbl:'Omset Hari Ini', val: fmtIDR(salesTotal(salesToday)), ic:'💰' },
+    { lbl:'Omset Minggu Ini', val: fmtIDR(salesTotal(salesWeek)), ic:'📅' },
+    { lbl:'Omset Bulan Ini', val: fmtIDR(salesTotal(salesMonth)), ic:'🗓' },
+    { lbl:'Omset Tahun Ini', val: fmtIDR(salesTotal(salesYear)), ic:'📆' },
+    { lbl:'Transaksi Hari Ini', val: salesToday.length, ic:'🧾' },
+    { lbl:'Produk Terjual', val: itemsSoldCount(salesPeriod), ic:'📦' },
+    { lbl:'Total Stok', val: totalStockQty.toLocaleString('id-ID'), ic:'📋' },
+    { lbl:'Nilai Persediaan', val: fmtIDR(stockValue), ic:'🏦' },
+    { lbl:'Pembelian Bulan Ini', val: fmtIDR(purchasesMonth.reduce((a,p)=>a+p.total,0)), ic:'🛒' },
+    { lbl:'Total Distributor', val: DB.distributors.filter(d=>d.status==='active').length, ic:'🚚' },
+    { lbl:'Total Reseller', val: DB.resellers.filter(d=>d.status==='active').length, ic:'🤝' },
+    { lbl:'Total Cabang', val: DB.branches.filter(b=>b.status==='active').length, ic:'🏬' },
+    { lbl:'Laba Kotor (Periode)', val: fmtIDR(salesProfit(salesPeriod)), ic:'📈' },
+    { lbl:'Stok Menipis', val: lowStock, ic:'⚠' },
+    { lbl:'Stok Habis', val: outStock, ic:'⛔' },
+  ];
+  document.getElementById('dash-stats').innerHTML = stats.map(s=>`
+    <div class="card stat-card">
+      <div class="top-row"><span class="lbl">${s.lbl}</span><span class="ic">${s.ic}</span></div>
+      <div class="val">${s.val}</div>
+    </div>`).join('');
+
+  // daily chart (14 days)
+  const days = []; const vals=[];
+  for(let i=13;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0);
+    const dEnd = new Date(d); dEnd.setHours(23,59,59,999);
+    const tot = DB.sales.filter(s=>{ const sd=new Date(s.date); return (branch==='ALL'||s.branchId===branch) && sd>=d && sd<=dEnd; }).reduce((a,s)=>a+s.total,0);
+    days.push(d.toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit'})); vals.push(tot);
+  }
+  document.getElementById('chart-daily').innerHTML = barChart(days, vals, {height:200});
+
+  // branch comparison
+  const bNames = DB.branches.filter(b=>b.status==='active').map(b=>b.name);
+  const bVals = DB.branches.filter(b=>b.status==='active').map(b=> salesTotal(filterSales(b.id, period)) );
+  document.getElementById('chart-branch').innerHTML = barChart(bNames, bVals, {height:200, color:'var(--accent-2)'});
+
+  // top products
+  const prodQty = {};
+  salesPeriod.forEach(s=> s.items.forEach(it=>{ prodQty[it.productId]=(prodQty[it.productId]||0)+it.qty; }));
+  const topProd = Object.entries(prodQty).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  document.getElementById('widget-top-products').innerHTML = topProd.length? topProd.map(([pid,qty],i)=>{
+    const p = DB.products.find(x=>x.id===pid);
+    return `<div class="item"><span><span class="rank">${i+1}</span>${escapeHtml(p?p.name:'—')}</span><b>${qty} terjual</b></div>`;
+  }).join('') : `<div class="empty-state"><div class="glyph">📊</div>Belum ada penjualan pada periode ini</div>`;
+
+  // low stock widget
+  const lowList = prodInBranch.filter(p=>{ const st=stockStatus(productStock(p,branch),p.minStock); return st==='menipis'||st==='habis'; }).slice(0,8);
+  document.getElementById('widget-low-stock').innerHTML = lowList.length? lowList.map(p=>{
+    const st = stockStatus(productStock(p,branch),p.minStock);
+    return `<div class="item"><span>${escapeHtml(p.name)}</span><span class="badge ${st==='habis'?'danger':'warn'}">${st==='habis'?'Habis':'Menipis'} · ${productStock(p,branch)} ${p.unit}</span></div>`;
+  }).join('') : `<div class="empty-state"><div class="glyph">✅</div>Semua stok dalam kondisi aman</div>`;
+
+  // recent sales
+  const recentSales = [...DB.sales].filter(s=> branch==='ALL'||s.branchId===branch).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+  document.getElementById('widget-recent-sales').innerHTML = recentSales.length? recentSales.map(s=>{
+    const br = DB.branches.find(b=>b.id===s.branchId);
+    return `<div class="item"><span>${fmtDateID(s.date,true)} · ${escapeHtml(br?br.name:'')}</span><b>${fmtIDR(s.total)}</b></div>`;
+  }).join('') : `<div class="empty-state"><div class="glyph">🧾</div>Belum ada transaksi</div>`;
+
+  // recent purchases
+  const recentPurch = [...DB.purchases].filter(s=> branch==='ALL'||s.branchId===branch).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+  document.getElementById('widget-recent-purchases').innerHTML = recentPurch.length? recentPurch.map(s=>{
+    const d = DB.distributors.find(x=>x.id===s.distributorId);
+    return `<div class="item"><span>${fmtDateID(s.date)} · ${escapeHtml(d?d.name:'—')}</span><b>${fmtIDR(s.total)}</b></div>`;
+  }).join('') : `<div class="empty-state"><div class="glyph">🛒</div>Belum ada pembelian</div>`;
+}
+
+/* Lightweight inline SVG bar chart (no external deps -> keeps app light & offline) */
+function barChart(labels, values, opts){
+  opts = opts||{};
+  const h = opts.height||180, w = Math.max(labels.length*54, 320);
+  const max = Math.max(...values, 1);
+  const barW = Math.min(30, (w/labels.length)-14);
+  const color = opts.color || 'var(--accent)';
+  let bars='', labs='';
+  labels.forEach((lb,i)=>{
+    const x = i*(w/labels.length) + ((w/labels.length)-barW)/2;
+    const bh = Math.max(2,(values[i]/max)*(h-36));
+    const y = h-30-bh;
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="4" fill="${color}"><title>${lb}: ${values[i].toLocaleString('id-ID')}</title></rect>`;
+    labs += `<text x="${x+barW/2}" y="${h-12}" font-size="10" fill="var(--ink-mute)" text-anchor="middle">${lb}</text>`;
+  });
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%; height:${h}px; overflow:visible;" preserveAspectRatio="xMinYMid meet">${bars}${labs}</svg>`;
+}
+
+/* ================================================================
+   PRODUK
+================================================================ */
+let produkFilter = { search:'', category:'ALL', page:1 };
+function renderProduk(){
+  return `
+  <div class="toolbar">
+    <input class="grow" placeholder="Cari produk / merek..." oninput="produkFilter.search=this.value; produkFilter.page=1; renderProdukTable();">
+    <select id="produk-cat-filter" onchange="produkFilter.category=this.value; produkFilter.page=1; renderProdukTable();">
+      <option value="ALL">Semua Kategori</option>
+      ${DB.categories.map(c=>`<option value="${c}">${c}</option>`).join('')}
+    </select>
+    <button class="btn" onclick="openMasterDataModal()">🏷 Kelola Kategori/Merek/Satuan</button>
+    ${isOwner()?`<button class="btn primary" onclick="openProductForm()">+ Tambah Produk</button>`:''}
+  </div>
+  <div class="card"><div class="table-wrap" id="produk-table-wrap"></div></div>
+  `;
+}
+function renderProdukTable(){
+  const wrap = document.getElementById('produk-table-wrap'); if(!wrap) return;
+  const branch = activeBranchId();
+  let list = DB.products.filter(p=>{
+    const s = produkFilter.search.toLowerCase();
+    const matchS = !s || p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s);
+    const matchC = produkFilter.category==='ALL' || p.category===produkFilter.category;
+    return matchS && matchC;
+  });
+  const perPage=10, totalPages=Math.max(1,Math.ceil(list.length/perPage));
+  produkFilter.page = Math.min(produkFilter.page,totalPages);
+  const pageList = list.slice((produkFilter.page-1)*perPage, produkFilter.page*perPage);
+  if(!list.length){ wrap.innerHTML = `<div class="empty-state"><div class="glyph">📦</div>Belum ada produk yang cocok</div>`; return; }
+  wrap.innerHTML = `
+  <table><thead><tr>
+    <th>Produk</th><th>Merek</th><th>Kategori</th><th>Satuan</th><th>Harga Beli</th><th>Harga Jual</th><th>Laba</th><th>Stok</th><th>Min</th><th>Status</th><th>Aksi</th>
+  </tr></thead><tbody>
+  ${pageList.map(p=>{
+    const st = productStock(p, branch); const status = stockStatus(st, p.minStock);
+    return `<tr>
+      <td><b>${escapeHtml(p.name)}</b>${p.favorite?' <span title="Favorit">⭐</span>':''}</td>
+      <td>${escapeHtml(p.brand)}</td><td>${escapeHtml(p.category)}</td><td>${escapeHtml(p.unit)}</td>
+      <td>${fmtIDR(p.buyPrice)}</td><td>${fmtIDR(p.sellPrice)}</td><td>${fmtIDR(p.sellPrice-p.buyPrice)}</td>
+      <td>${st}</td><td class="muted">${p.minStock}</td>
+      <td><span class="badge ${status==='aman'?'ok':status==='menipis'?'warn':'danger'}">${status==='aman'?'Aman':status==='menipis'?'Menipis':'Habis'}</span></td>
+      <td class="row gap-8">
+        <button class="btn sm ghost" onclick="viewProductDetail('${p.id}')" title="Detail">👁</button>
+        ${isOwner()?`<button class="btn sm ghost" onclick="openProductForm('${p.id}')" title="Edit">✏</button>
+        <button class="btn sm ghost" onclick="openStockAdjust('${p.id}')" title="Sesuaikan Stok">🔧</button>
+        <button class="btn sm ghost" onclick="deleteProduct('${p.id}')" title="Hapus">🗑</button>`:''}
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>
+  <div class="pagination">
+    <span>Menampilkan ${pageList.length} dari ${list.length} produk</span>
+    <div class="btns">
+      <button class="btn sm" ${produkFilter.page<=1?'disabled':''} onclick="produkFilter.page--; renderProdukTable();">‹ Sebelumnya</button>
+      <span style="padding:6px 4px;">Hal. ${produkFilter.page}/${totalPages}</span>
+      <button class="btn sm" ${produkFilter.page>=totalPages?'disabled':''} onclick="produkFilter.page++; renderProdukTable();">Berikutnya ›</button>
+    </div>
+  </div>`;
+}
+setTimeout(function tick(){ if(currentView==='produk' && document.getElementById('produk-table-wrap')) renderProdukTable(); }, 0);
+
+function openProductForm(id){
+  const p = id ? DB.products.find(x=>x.id===id) : null;
+  openModal(`
+    <div class="modal-head"><h3>${p?'Edit Produk':'Tambah Produk'}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nama Produk</label><input id="pf-name" value="${p?escapeHtml(p.name):''}"></div>
+      <div class="field-row">
+        <div class="field"><label>Merek</label><select id="pf-brand">${DB.brands.map(b=>`<option ${p&&p.brand===b?'selected':''}>${b}</option>`).join('')}</select></div>
+        <div class="field"><label>Kategori</label><select id="pf-cat">${DB.categories.map(c=>`<option ${p&&p.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Satuan</label><select id="pf-unit">${DB.units.map(u=>`<option ${p&&p.unit===u?'selected':''}>${u}</option>`).join('')}</select></div>
+        <div class="field"><label>Stok Minimum</label><input type="number" id="pf-min" value="${p?p.minStock:10}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Harga Beli</label><input type="number" id="pf-buy" value="${p?p.buyPrice:0}"></div>
+        <div class="field"><label>Harga Jual</label><input type="number" id="pf-sell" value="${p?p.sellPrice:0}"></div>
+      </div>
+      <div class="field"><label>Cabang</label>
+        <select id="pf-branch">${DB.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('')}</select>
+        <div class="muted" style="font-size:11.5px; margin-top:4px;">Stok awal akan diisikan ke cabang terpilih. Cabang lain mulai dari 0 (dapat diisi via Inventaris).</div>
+      </div>
+      <div class="field"><label>Stok Awal (cabang terpilih)</label><input type="number" id="pf-stock" value="${p?0:0}" ${p?'disabled':''}></div>
+      <div class="field"><label>Deskripsi</label><textarea id="pf-desc" rows="2">${p?escapeHtml(p.description||''):''}</textarea></div>
+      <div class="check-row"><input type="checkbox" id="pf-fav" ${p&&p.favorite?'checked':''}><label style="margin:0;">Tandai sebagai produk favorit (tampil di panel POS)</label></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Batal</button>
+      <button class="btn primary" onclick="saveProduct(${p?`'${p.id}'`:'null'})">Simpan Produk</button>
+    </div>`);
+}
+function saveProduct(id){
+  const name = document.getElementById('pf-name').value.trim();
+  if(!name){ toast('Nama produk wajib diisi','error'); return; }
+  const data = {
+    name, brand:document.getElementById('pf-brand').value, category:document.getElementById('pf-cat').value,
+    unit:document.getElementById('pf-unit').value, minStock:+document.getElementById('pf-min').value||0,
+    buyPrice:+document.getElementById('pf-buy').value||0, sellPrice:+document.getElementById('pf-sell').value||0,
+    description:document.getElementById('pf-desc').value, favorite:document.getElementById('pf-fav').checked,
+  };
+  if(id){
+    const p = DB.products.find(x=>x.id===id); Object.assign(p, data);
+    toast('Produk berhasil diperbarui','success');
+  } else {
+    const branchId = document.getElementById('pf-branch').value;
+    const initStock = +document.getElementById('pf-stock').value||0;
+    const stock = {}; DB.branches.forEach(b=> stock[b.id]=0); stock[branchId]=initStock;
+    const np = { id:uid('p'), status:'active', stock, ...data };
+    DB.products.push(np);
+    if(initStock>0) logStock(np.id, branchId, 'in', initStock, 'Stok awal produk baru');
+    toast('Produk baru ditambahkan','success');
+  }
+  saveDB(); closeModal(); renderProdukTable();
+}
+function deleteProduct(id){
+  confirmAction('Hapus Produk', 'Produk ini akan dihapus permanen dari sistem. Lanjutkan?', ()=>{
+    DB.products = DB.products.filter(p=>p.id!==id); saveDB(); renderProdukTable(); toast('Produk dihapus','success');
+  });
+}
+function viewProductDetail(id){
+  const p = DB.products.find(x=>x.id===id); if(!p) return;
+  const hist = DB.stockHistory.filter(h=>h.productId===id).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
+  openModal(`
+    <div class="modal-head"><h3>${escapeHtml(p.name)}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="kv" style="margin-bottom:16px;">
+        <div class="k">Merek</div><div>${escapeHtml(p.brand)}</div>
+        <div class="k">Kategori</div><div>${escapeHtml(p.category)}</div>
+        <div class="k">Satuan</div><div>${escapeHtml(p.unit)}</div>
+        <div class="k">Harga Beli</div><div>${fmtIDR(p.buyPrice)}</div>
+        <div class="k">Harga Jual</div><div>${fmtIDR(p.sellPrice)}</div>
+        <div class="k">Laba/unit</div><div>${fmtIDR(p.sellPrice-p.buyPrice)}</div>
+        <div class="k">Deskripsi</div><div>${escapeHtml(p.description||'—')}</div>
+      </div>
+      <div class="section-title" style="margin-top:0;">Stok per Cabang</div>
+      <table><thead><tr><th>Cabang</th><th>Stok</th><th>Status</th></tr></thead><tbody>
+      ${DB.branches.map(b=>{ const s=p.stock[b.id]||0; const st=stockStatus(s,p.minStock);
+        return `<tr><td>${escapeHtml(b.name)}</td><td>${s} ${p.unit}</td><td><span class="badge ${st==='aman'?'ok':st==='menipis'?'warn':'danger'}">${st}</span></td></tr>`; }).join('')}
+      </tbody></table>
+      <div class="section-title">Riwayat Stok Terbaru</div>
+      ${hist.length? `<table><thead><tr><th>Tanggal</th><th>Tipe</th><th>Cabang</th><th>Qty</th><th>Catatan</th></tr></thead><tbody>
+      ${hist.map(h=>{ const br=DB.branches.find(b=>b.id===h.branchId);
+        return `<tr><td>${fmtDateID(h.date,true)}</td><td>${stockTypeLabel(h.type)}</td><td>${br?br.name:''}</td><td>${h.qty>0?'+':''}${h.qty}</td><td class="muted">${escapeHtml(h.note||'')}</td></tr>`; }).join('')}
+      </tbody></table>` : `<p class="muted">Belum ada riwayat.</p>`}
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+}
+function stockTypeLabel(t){ return {in:'Stok Masuk', out:'Stok Keluar', adjust:'Penyesuaian', sale:'Penjualan', purchase:'Pembelian', mutasi_keluar:'Mutasi Keluar', mutasi_masuk:'Mutasi Masuk'}[t] || t; }
+
+function logStock(productId, branchId, type, qty, note, refId){
+  DB.stockHistory.push({ id:uid('sh'), date:todayISO(), productId, branchId, type, qty, note:note||'', refId:refId||null });
+}
+
+/* Master data (categories/brands/units) */
+function openMasterDataModal(){
+  openModal(`
+    <div class="modal-head"><h3>Kelola Kategori, Merek & Satuan</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <div class="tab active" data-t="categories" onclick="switchMasterTab('categories')">Kategori</div>
+        <div class="tab" data-t="brands" onclick="switchMasterTab('brands')">Merek</div>
+        <div class="tab" data-t="units" onclick="switchMasterTab('units')">Satuan</div>
+      </div>
+      <div id="master-tab-content"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+  switchMasterTab('categories');
+}
+function switchMasterTab(t){
+  document.querySelectorAll('#modal-box .tab').forEach(el=>el.classList.toggle('active', el.dataset.t===t));
+  const label = {categories:'kategori', brands:'merek', units:'satuan'}[t];
+  const list = DB[t];
+  document.getElementById('master-tab-content').innerHTML = `
+    <div class="row gap-8" style="margin-bottom:12px;">
+      <input id="master-new-val" placeholder="Tambah ${label} baru...">
+      <button class="btn primary sm" onclick="addMasterItem('${t}')">Tambah</button>
+    </div>
+    <div class="table-wrap" style="max-height:260px;"><table><tbody>
+    ${list.map((item,i)=>`<tr><td>${escapeHtml(item)}</td><td style="width:1%;"><button class="btn sm ghost" onclick="removeMasterItem('${t}',${i})">🗑</button></td></tr>`).join('') || '<tr><td class="muted">Belum ada data</td></tr>'}
+    </tbody></table></div>`;
+}
+function addMasterItem(t){
+  const val = document.getElementById('master-new-val').value.trim();
+  if(!val){ return; }
+  if(DB[t].includes(val)){ toast('Sudah ada dalam daftar','error'); return; }
+  DB[t].push(val); saveDB(); switchMasterTab(t); toast('Berhasil ditambahkan','success');
+}
+function removeMasterItem(t,i){
+  const val = DB[t][i];
+  const inUse = t==='categories' ? DB.products.some(p=>p.category===val) : t==='brands' ? DB.products.some(p=>p.brand===val) : DB.products.some(p=>p.unit===val);
+  if(inUse){ toast('Tidak dapat dihapus, masih digunakan produk','error'); return; }
+  DB[t].splice(i,1); saveDB(); switchMasterTab(t);
+}
+
+function openStockAdjust(id){
+  const p = DB.products.find(x=>x.id===id);
+  openModal(`
+    <div class="modal-head"><h3>Sesuaikan Stok — ${escapeHtml(p.name)}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Cabang</label>
+        <select id="sa-branch">${DB.branches.map(b=>`<option value="${b.id}">${b.name} (stok saat ini: ${p.stock[b.id]||0})</option>`).join('')}</select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Jenis</label><select id="sa-type"><option value="in">Tambah Stok (Masuk)</option><option value="out">Kurangi Stok (Keluar)</option><option value="adjust">Set Nilai Pasti</option></select></div>
+        <div class="field"><label>Jumlah</label><input type="number" id="sa-qty" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>Catatan</label><input id="sa-note" placeholder="Alasan penyesuaian..."></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="applyStockAdjust('${id}')">Simpan</button></div>`);
+}
+function applyStockAdjust(id){
+  const p = DB.products.find(x=>x.id===id);
+  const branchId = document.getElementById('sa-branch').value;
+  const type = document.getElementById('sa-type').value;
+  const qty = +document.getElementById('sa-qty').value||0;
+  const note = document.getElementById('sa-note').value;
+  const before = p.stock[branchId]||0;
+  let delta=0;
+  if(type==='in'){ p.stock[branchId]=before+qty; delta=qty; }
+  else if(type==='out'){ p.stock[branchId]=Math.max(0,before-qty); delta=-(before-p.stock[branchId]); }
+  else { p.stock[branchId]=qty; delta=qty-before; }
+  logStock(id, branchId, 'adjust', delta, note || 'Penyesuaian manual');
+  saveDB(); closeModal(); toast('Stok diperbarui','success');
+  if(currentView==='produk') renderProdukTable(); if(currentView==='inventaris') renderInventarisTable();
+}
+
+/* ================================================================
+   INVENTARIS
+================================================================ */
+let invFilter = { branch:'ACTIVE', category:'ALL', status:'ALL', search:'' };
+function renderInventaris(){
+  const branch = activeBranchId();
+  return `
+  <div class="section-title" style="margin-top:0;">Ringkasan Inventaris ${isOwner()?'':'· '+ (activeBranch()?activeBranch().name:'')}</div>
+  <div class="grid-stats" id="inv-summary"></div>
+  <div class="toolbar" style="margin-top:20px;">
+    <input class="grow" placeholder="Cari produk..." oninput="invFilter.search=this.value; renderInventarisTable();">
+    <select onchange="invFilter.category=this.value; renderInventarisTable();"><option value="ALL">Semua Kategori</option>${DB.categories.map(c=>`<option>${c}</option>`).join('')}</select>
+    <select onchange="invFilter.status=this.value; renderInventarisTable();">
+      <option value="ALL">Semua Status</option><option value="aman">Aman</option><option value="menipis">Menipis</option><option value="habis">Habis</option>
+    </select>
+    ${isOwner()?`<button class="btn" onclick="openStockMutation()">🔀 Mutasi Antar Cabang</button>`:''}
+  </div>
+  <div class="card"><div class="table-wrap" id="inv-table-wrap"></div></div>`;
+}
+function renderInventarisTable(){
+  const summaryEl = document.getElementById('inv-summary');
+  const wrap = document.getElementById('inv-table-wrap'); if(!wrap) return;
+  const branch = isOwner() ? (SESSION.activeBranch) : activeBranchId();
+  const scopeBranch = isOwner() ? branch : branch; // owner sees active-branch by default with switcher available via topbar
+  const active = DB.products.filter(p=>p.status==='active');
+  const totalValue = active.reduce((a,p)=>a+productStock(p,scopeBranch)*p.buyPrice,0);
+  const totalTypes = active.length;
+  const totalQty = active.reduce((a,p)=>a+productStock(p,scopeBranch),0);
+  const aman = active.filter(p=>stockStatus(productStock(p,scopeBranch),p.minStock)==='aman').length;
+  const menipis = active.filter(p=>stockStatus(productStock(p,scopeBranch),p.minStock)==='menipis').length;
+  const habis = active.filter(p=>stockStatus(productStock(p,scopeBranch),p.minStock)==='habis').length;
+  const now = new Date();
+  const inMonth = DB.stockHistory.filter(h=> (h.type==='in'||h.type==='purchase'||h.type==='mutasi_masuk') && (scopeBranch==='ALL'||h.branchId===scopeBranch) && new Date(h.date).getMonth()===now.getMonth()).reduce((a,h)=>a+Math.max(0,h.qty),0);
+  const outMonth = DB.stockHistory.filter(h=> (h.type==='out'||h.type==='sale'||h.type==='mutasi_keluar') && (scopeBranch==='ALL'||h.branchId===scopeBranch) && new Date(h.date).getMonth()===now.getMonth()).reduce((a,h)=>a+Math.abs(Math.min(0,h.qty))+Math.abs(h.qty<0?h.qty:0),0);
+  if(summaryEl) summaryEl.innerHTML = [
+    {l:'Nilai Stok', v:fmtIDR(totalValue)}, {l:'Jenis Produk', v:totalTypes}, {l:'Total Stok', v:totalQty.toLocaleString('id-ID')},
+    {l:'Barang Aman', v:aman}, {l:'Barang Menipis', v:menipis}, {l:'Barang Habis', v:habis},
+    {l:'Stok Masuk Bulan Ini', v:inMonth}, {l:'Stok Keluar Bulan Ini', v:outMonth},
+  ].map(s=>`<div class="card stat-card"><div class="lbl">${s.l}</div><div class="val" style="font-size:18px; margin-top:6px;">${s.v}</div></div>`).join('');
+
+  let list = active.filter(p=>{
+    const s = invFilter.search.toLowerCase();
+    const matchS = !s || p.name.toLowerCase().includes(s);
+    const matchC = invFilter.category==='ALL' || p.category===invFilter.category;
+    const st = stockStatus(productStock(p,scopeBranch), p.minStock);
+    const matchSt = invFilter.status==='ALL' || st===invFilter.status;
+    return matchS && matchC && matchSt;
+  });
+  if(!list.length){ wrap.innerHTML = `<div class="empty-state"><div class="glyph">📋</div>Tidak ada data inventaris</div>`; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Produk</th><th>Kategori</th><th>Stok</th><th>Min</th><th>Satuan</th><th>Nilai Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+  ${list.map(p=>{ const st=productStock(p,scopeBranch); const status=stockStatus(st,p.minStock);
+    return `<tr><td><b>${escapeHtml(p.name)}</b></td><td>${escapeHtml(p.category)}</td><td>${st}</td><td class="muted">${p.minStock}</td><td>${escapeHtml(p.unit)}</td><td>${fmtIDR(st*p.buyPrice)}</td>
+    <td><span class="badge ${status==='aman'?'ok':status==='menipis'?'warn':'danger'}">${status==='aman'?'Aman':status==='menipis'?'Menipis':'Habis'}</span></td>
+    <td class="row gap-8"><button class="btn sm ghost" onclick="openStockAdjust('${p.id}')">🔧 Sesuaikan</button><button class="btn sm ghost" onclick="viewProductDetail('${p.id}')">📜 Riwayat</button></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+setInterval(()=>{ if(currentView==='inventaris' && document.getElementById('inv-table-wrap')) renderInventarisTable(); }, 99999); // placeholder no-op (kept lightweight, refresh via explicit calls)
+
+function openStockMutation(){
+  openModal(`
+    <div class="modal-head"><h3>Mutasi Stok Antar Cabang</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Produk</label><select id="mut-product">${DB.products.filter(p=>p.status==='active').map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select></div>
+      <div class="field-row">
+        <div class="field"><label>Dari Cabang</label><select id="mut-from">${DB.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('')}</select></div>
+        <div class="field"><label>Ke Cabang</label><select id="mut-to">${DB.branches.map((b,i)=>`<option value="${b.id}" ${i===1?'selected':''}>${b.name}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Jumlah</label><input type="number" id="mut-qty" min="1" value="1"></div>
+      <div class="field"><label>Catatan</label><input id="mut-note" placeholder="Opsional"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="applyMutation()">Proses Mutasi</button></div>`);
+}
+function applyMutation(){
+  const pid = document.getElementById('mut-product').value;
+  const from = document.getElementById('mut-from').value, to = document.getElementById('mut-to').value;
+  const qty = +document.getElementById('mut-qty').value||0;
+  const note = document.getElementById('mut-note').value;
+  if(from===to){ toast('Cabang asal dan tujuan tidak boleh sama','error'); return; }
+  const p = DB.products.find(x=>x.id===pid);
+  if((p.stock[from]||0) < qty){ toast('Stok cabang asal tidak mencukupi','error'); return; }
+  p.stock[from] -= qty; p.stock[to] = (p.stock[to]||0) + qty;
+  logStock(pid, from, 'mutasi_keluar', -qty, 'Mutasi ke '+DB.branches.find(b=>b.id===to).name+(note?': '+note:''));
+  logStock(pid, to, 'mutasi_masuk', qty, 'Mutasi dari '+DB.branches.find(b=>b.id===from).name+(note?': '+note:''));
+  saveDB(); closeModal(); toast('Mutasi stok berhasil','success'); renderInventarisTable();
+}
+
+/* ================================================================
+   PEMBELIAN
+================================================================ */
+let purchFilter = { distributor:'ALL', branch:'ALL', from:'', to:'' };
+function renderPembelian(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3><p>Hanya Owner yang dapat mengelola pembelian.</p></div>`;
+  return `
+  <div class="toolbar">
+    <select onchange="purchFilter.distributor=this.value; renderPembelianTable();"><option value="ALL">Semua Distributor</option>${DB.distributors.map(d=>`<option value="${d.id}">${d.name}</option>`).join('')}</select>
+    <select onchange="purchFilter.branch=this.value; renderPembelianTable();"><option value="ALL">Semua Cabang</option>${DB.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('')}</select>
+    <input type="date" onchange="purchFilter.from=this.value; renderPembelianTable();">
+    <input type="date" onchange="purchFilter.to=this.value; renderPembelianTable();">
+    <div style="flex:1"></div>
+    <button class="btn primary" onclick="openPurchaseForm()">+ Catat Pembelian</button>
+  </div>
+  <div class="card"><div class="table-wrap" id="purch-table-wrap"></div></div>`;
+}
+function renderPembelianTable(){
+  const wrap = document.getElementById('purch-table-wrap'); if(!wrap) return;
+  let list = [...DB.purchases].sort((a,b)=>new Date(b.date)-new Date(a.date)).filter(p=>{
+    const matchD = purchFilter.distributor==='ALL' || p.distributorId===purchFilter.distributor;
+    const matchB = purchFilter.branch==='ALL' || p.branchId===purchFilter.branch;
+    const d = new Date(p.date);
+    const matchFrom = !purchFilter.from || d >= new Date(purchFilter.from);
+    const matchTo = !purchFilter.to || d <= new Date(purchFilter.to+'T23:59:59');
+    return matchD && matchB && matchFrom && matchTo;
+  });
+  if(!list.length){ wrap.innerHTML = `<div class="empty-state"><div class="glyph">🛒</div>Belum ada data pembelian</div>`; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Tanggal</th><th>Distributor</th><th>Cabang</th><th>Jml Item</th><th>Total</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody>
+  ${list.map(p=>{
+    const dist = DB.distributors.find(x=>x.id===p.distributorId); const br = DB.branches.find(x=>x.id===p.branchId);
+    return `<tr><td>${fmtDateID(p.date)}</td><td>${escapeHtml(dist?dist.name:'—')}</td><td>${escapeHtml(br?br.name:'—')}</td><td>${p.items.reduce((a,i)=>a+i.qty,0)}</td><td><b>${fmtIDR(p.total)}</b></td><td class="muted">${escapeHtml(p.note||'—')}</td>
+    <td class="row gap-8"><button class="btn sm ghost" onclick="viewPurchaseDetail('${p.id}')">👁</button><button class="btn sm ghost" onclick="openPurchaseForm('${p.id}')">✏</button><button class="btn sm ghost" onclick="deletePurchase('${p.id}')">🗑</button></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+function purchaseFormRow(item){
+  const idx = item ? item._idx : Date.now();
+  return `<div class="pf-item-row row gap-8" data-idx="${idx}" style="margin-bottom:8px; align-items:flex-end;">
+    <div class="field" style="flex:2; margin:0;"><label>Produk</label><select class="pf-item-prod">${DB.products.map(p=>`<option value="${p.id}" ${item&&item.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}</select></div>
+    <div class="field" style="flex:1; margin:0;"><label>Jumlah</label><input type="number" class="pf-item-qty" min="1" value="${item?item.qty:1}"></div>
+    <div class="field" style="flex:1; margin:0;"><label>Harga Beli</label><input type="number" class="pf-item-price" value="${item?item.buyPrice:0}"></div>
+    <button class="btn sm ghost pf-item-del" onclick="this.closest('.pf-item-row').remove()">🗑</button>
+  </div>`;
+}
+function openPurchaseForm(id){
+  const p = id ? DB.purchases.find(x=>x.id===id) : null;
+  openModal(`
+    <div class="modal-head"><h3>${p?'Edit Pembelian':'Catat Pembelian'}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field"><label>Tanggal</label><input type="date" id="pu-date" value="${p? new Date(p.date).toISOString().slice(0,10) : new Date().toISOString().slice(0,10)}"></div>
+        <div class="field"><label>Distributor</label><select id="pu-dist">${DB.distributors.map(d=>`<option value="${d.id}" ${p&&p.distributorId===d.id?'selected':''}>${d.name}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Cabang</label><select id="pu-branch">${DB.branches.map(b=>`<option value="${b.id}" ${p&&p.branchId===b.id?'selected':(!p&&b.id===activeBranchId()?'selected':'')}>${b.name}</option>`).join('')}</select></div>
+      <label>Produk Dibeli</label>
+      <div id="pf-items">${p? p.items.map(purchaseFormRow).join('') : purchaseFormRow()}</div>
+      <button class="btn sm" onclick="document.getElementById('pf-items').insertAdjacentHTML('beforeend', purchaseFormRow())">+ Tambah Produk</button>
+      <div class="field-row" style="margin-top:14px;">
+        <div class="field"><label>Diskon Total (Rp)</label><input type="number" id="pu-disc" value="${p?p.discountTotal:0}"></div>
+        <div class="field"><label>Ongkos Kirim (Rp)</label><input type="number" id="pu-ship" value="${p?p.shipping:0}"></div>
+      </div>
+      <div class="field"><label>Catatan</label><input id="pu-note" value="${p?escapeHtml(p.note||''):''}"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="savePurchase(${p?`'${p.id}'`:'null'})">Simpan Pembelian</button></div>`, true);
+}
+function savePurchase(id){
+  const rows = [...document.querySelectorAll('.pf-item-row')];
+  if(!rows.length){ toast('Tambahkan minimal 1 produk','error'); return; }
+  const items = rows.map(r=>({ productId:r.querySelector('.pf-item-prod').value, qty:+r.querySelector('.pf-item-qty').value||0, buyPrice:+r.querySelector('.pf-item-price').value||0 })).filter(i=>i.qty>0);
+  if(!items.length){ toast('Jumlah produk tidak valid','error'); return; }
+  const branchId = document.getElementById('pu-branch').value;
+  const distributorId = document.getElementById('pu-dist').value;
+  const date = document.getElementById('pu-date').value;
+  const discountTotal = +document.getElementById('pu-disc').value||0;
+  const shipping = +document.getElementById('pu-ship').value||0;
+  const note = document.getElementById('pu-note').value;
+  const subtotal = items.reduce((a,i)=>a+i.qty*i.buyPrice,0);
+  const total = subtotal - discountTotal + shipping;
+
+  if(id){
+    // revert old stock effects first
+    const old = DB.purchases.find(x=>x.id===id);
+    old.items.forEach(it=>{ const p=DB.products.find(x=>x.id===it.productId); if(p){ p.stock[old.branchId]=(p.stock[old.branchId]||0)-it.qty; logStock(it.productId, old.branchId, 'adjust', -it.qty, 'Koreksi edit pembelian'); } });
+    Object.assign(old, { date:new Date(date).toISOString(), branchId, distributorId, items, discountTotal, shipping, subtotal, total, note });
+    items.forEach(it=>{ const p=DB.products.find(x=>x.id===it.productId); if(p){ p.stock[branchId]=(p.stock[branchId]||0)+it.qty; p.buyPrice=it.buyPrice; logStock(it.productId, branchId, 'purchase', it.qty, 'Update pembelian', id); } });
+    toast('Pembelian diperbarui','success');
+  } else {
+    const np = { id:uid('pu'), date:new Date(date).toISOString(), branchId, distributorId, items, discountTotal, shipping, subtotal, total, note };
+    DB.purchases.push(np);
+    items.forEach(it=>{ const p=DB.products.find(x=>x.id===it.productId); if(p){ p.stock[branchId]=(p.stock[branchId]||0)+it.qty; p.buyPrice=it.buyPrice; logStock(it.productId, branchId, 'purchase', it.qty, 'Pembelian dari distributor', np.id); } });
+    toast('Pembelian berhasil dicatat','success');
+  }
+  saveDB(); closeModal(); renderPembelianTable();
+}
+function deletePurchase(id){
+  confirmAction('Hapus Pembelian','Stok yang sebelumnya ditambahkan dari pembelian ini akan dikurangi kembali. Lanjutkan?', ()=>{
+    const p = DB.purchases.find(x=>x.id===id);
+    p.items.forEach(it=>{ const prod=DB.products.find(x=>x.id===it.productId); if(prod){ prod.stock[p.branchId]=Math.max(0,(prod.stock[p.branchId]||0)-it.qty); logStock(it.productId, p.branchId, 'adjust', -it.qty, 'Pembelian dihapus'); } });
+    DB.purchases = DB.purchases.filter(x=>x.id!==id); saveDB(); renderPembelianTable(); toast('Pembelian dihapus','success');
+  });
+}
+function viewPurchaseDetail(id){
+  const p = DB.purchases.find(x=>x.id===id); const dist=DB.distributors.find(d=>d.id===p.distributorId); const br=DB.branches.find(b=>b.id===p.branchId);
+  openModal(`
+    <div class="modal-head"><h3>Detail Pembelian</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="kv" style="margin-bottom:14px;">
+        <div class="k">Tanggal</div><div>${fmtDateID(p.date)}</div>
+        <div class="k">Distributor</div><div>${escapeHtml(dist?dist.name:'—')}</div>
+        <div class="k">Cabang</div><div>${escapeHtml(br?br.name:'—')}</div>
+        <div class="k">Catatan</div><div>${escapeHtml(p.note||'—')}</div>
+      </div>
+      <table><thead><tr><th>Produk</th><th>Qty</th><th>Harga Beli</th><th>Subtotal</th></tr></thead><tbody>
+      ${p.items.map(i=>{ const prod=DB.products.find(x=>x.id===i.productId); return `<tr><td>${escapeHtml(prod?prod.name:'—')}</td><td>${i.qty}</td><td>${fmtIDR(i.buyPrice)}</td><td>${fmtIDR(i.qty*i.buyPrice)}</td></tr>`; }).join('')}
+      </tbody></table>
+      <div class="sum-line"><span>Subtotal</span><b>${fmtIDR(p.subtotal)}</b></div>
+      <div class="sum-line"><span>Diskon</span><b>-${fmtIDR(p.discountTotal)}</b></div>
+      <div class="sum-line"><span>Ongkos Kirim</span><b>${fmtIDR(p.shipping)}</b></div>
+      <div class="sum-line total"><span>Total</span><b>${fmtIDR(p.total)}</b></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+}
+
+/* ================================================================
+   DISTRIBUTOR
+================================================================ */
+function renderDistributor(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3></div>`;
+  return `
+  <div class="toolbar"><div class="grow"></div><button class="btn primary" onclick="openDistributorForm()">+ Tambah Distributor</button></div>
+  <div class="card"><div class="table-wrap" id="dist-table-wrap"></div></div>`;
+}
+function renderDistTable(){
+  const wrap = document.getElementById('dist-table-wrap'); if(!wrap) return;
+  if(!DB.distributors.length){ wrap.innerHTML=`<div class="empty-state"><div class="glyph">🚚</div>Belum ada distributor</div>`; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Nama</th><th>Kontak</th><th>Alamat</th><th>Produk Utama</th><th>Total Pembelian</th><th>Cabang</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+  ${DB.distributors.map(d=>{
+    const total = DB.purchases.filter(p=>p.distributorId===d.id).reduce((a,p)=>a+p.total,0);
+    const br = DB.branches.find(b=>b.id===d.branchId);
+    return `<tr><td><b>${escapeHtml(d.name)}</b></td><td>${escapeHtml(d.contact)}</td><td class="muted">${escapeHtml(d.address)}</td><td>${escapeHtml(d.mainProduct)}</td><td>${fmtIDR(total)}</td><td>${escapeHtml(br?br.name:'—')}</td>
+    <td><span class="badge ${d.status==='active'?'ok':'neutral'}">${d.status==='active'?'Aktif':'Nonaktif'}</span></td>
+    <td class="row gap-8"><button class="btn sm ghost" onclick="viewDistHistory('${d.id}')">📜</button><button class="btn sm ghost" onclick="openDistributorForm('${d.id}')">✏</button><button class="btn sm ghost" onclick="toggleDistStatus('${d.id}')">${d.status==='active'?'⏸':'▶'}</button><button class="btn sm ghost" onclick="deleteDistributor('${d.id}')">🗑</button></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+function openDistributorForm(id){
+  const d = id? DB.distributors.find(x=>x.id===id): null;
+  openModal(`
+    <div class="modal-head"><h3>${d?'Edit':'Tambah'} Distributor</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nama</label><input id="df-name" value="${d?escapeHtml(d.name):''}"></div>
+      <div class="field-row">
+        <div class="field"><label>Kontak</label><input id="df-contact" value="${d?escapeHtml(d.contact):''}"></div>
+        <div class="field"><label>Cabang</label><select id="df-branch">${DB.branches.map(b=>`<option value="${b.id}" ${d&&d.branchId===b.id?'selected':''}>${b.name}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Alamat</label><input id="df-address" value="${d?escapeHtml(d.address):''}"></div>
+      <div class="field"><label>Produk Utama</label><input id="df-product" value="${d?escapeHtml(d.mainProduct):''}"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="saveDistributor(${d?`'${d.id}'`:'null'})">Simpan</button></div>`);
+}
+function saveDistributor(id){
+  const data = { name:document.getElementById('df-name').value.trim(), contact:document.getElementById('df-contact').value, branchId:document.getElementById('df-branch').value, address:document.getElementById('df-address').value, mainProduct:document.getElementById('df-product').value };
+  if(!data.name){ toast('Nama wajib diisi','error'); return; }
+  if(id){ Object.assign(DB.distributors.find(x=>x.id===id), data); } else { DB.distributors.push({ id:uid('d'), status:'active', ...data }); }
+  saveDB(); closeModal(); renderDistTable(); toast('Distributor tersimpan','success');
+}
+function toggleDistStatus(id){ const d=DB.distributors.find(x=>x.id===id); d.status = d.status==='active'?'inactive':'active'; saveDB(); renderDistTable(); }
+function deleteDistributor(id){ confirmAction('Hapus Distributor','Distributor ini akan dihapus. Riwayat pembelian tetap tersimpan.', ()=>{ DB.distributors=DB.distributors.filter(x=>x.id!==id); saveDB(); renderDistTable(); toast('Dihapus','success'); }); }
+function viewDistHistory(id){
+  const d = DB.distributors.find(x=>x.id===id);
+  const hist = DB.purchases.filter(p=>p.distributorId===id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  openModal(`<div class="modal-head"><h3>Riwayat Pembelian — ${escapeHtml(d.name)}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">${hist.length? `<table><thead><tr><th>Tanggal</th><th>Cabang</th><th>Item</th><th>Total</th></tr></thead><tbody>
+  ${hist.map(p=>{ const br=DB.branches.find(b=>b.id===p.branchId); return `<tr><td>${fmtDateID(p.date)}</td><td>${br?br.name:''}</td><td>${p.items.reduce((a,i)=>a+i.qty,0)}</td><td>${fmtIDR(p.total)}</td></tr>`; }).join('')}
+  </tbody></table>` : `<div class="empty-state">Belum ada riwayat pembelian</div>`}</div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+}
+
+/* ================================================================
+   RESELLER
+================================================================ */
+function renderReseller(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3></div>`;
+  return `<div class="toolbar"><div class="grow"></div><button class="btn primary" onclick="openResellerForm()">+ Tambah Reseller</button></div>
+  <div class="card"><div class="table-wrap" id="rs-table-wrap"></div></div>`;
+}
+function renderResellerTable(){
+  const wrap = document.getElementById('rs-table-wrap'); if(!wrap) return;
+  if(!DB.resellers.length){ wrap.innerHTML=`<div class="empty-state"><div class="glyph">🤝</div>Belum ada reseller</div>`; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Nama</th><th>Kontak</th><th>Cabang</th><th>Total Pembelian</th><th>Transaksi Terakhir</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+  ${DB.resellers.map(r=>{
+    const sales = DB.sales.filter(s=>s.resellerId===r.id);
+    const total = sales.reduce((a,s)=>a+s.total,0);
+    const last = sales.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+    const br = DB.branches.find(b=>b.id===r.branchId);
+    return `<tr><td><b>${escapeHtml(r.name)}</b></td><td>${escapeHtml(r.contact)}</td><td>${escapeHtml(br?br.name:'—')}</td><td>${fmtIDR(total)}</td><td class="muted">${last?fmtDateID(last.date):'—'}</td>
+    <td><span class="badge ${r.status==='active'?'ok':'neutral'}">${r.status==='active'?'Aktif':'Nonaktif'}</span></td>
+    <td class="row gap-8"><button class="btn sm ghost" onclick="openResellerForm('${r.id}')">✏</button><button class="btn sm ghost" onclick="toggleResellerStatus('${r.id}')">${r.status==='active'?'⏸':'▶'}</button><button class="btn sm ghost" onclick="deleteReseller('${r.id}')">🗑</button></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+function openResellerForm(id){
+  const r = id? DB.resellers.find(x=>x.id===id): null;
+  openModal(`<div class="modal-head"><h3>${r?'Edit':'Tambah'} Reseller</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="field"><label>Nama Reseller</label><input id="rf-name" value="${r?escapeHtml(r.name):''}"></div>
+    <div class="field-row">
+      <div class="field"><label>Kontak</label><input id="rf-contact" value="${r?escapeHtml(r.contact):''}"></div>
+      <div class="field"><label>Cabang</label><select id="rf-branch">${DB.branches.map(b=>`<option value="${b.id}" ${r&&r.branchId===b.id?'selected':''}>${b.name}</option>`).join('')}</select></div>
+    </div>
+    <div class="field"><label>Alamat</label><input id="rf-address" value="${r?escapeHtml(r.address):''}"></div>
+  </div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="saveReseller(${r?`'${r.id}'`:'null'})">Simpan</button></div>`);
+}
+function saveReseller(id){
+  const data = { name:document.getElementById('rf-name').value.trim(), contact:document.getElementById('rf-contact').value, branchId:document.getElementById('rf-branch').value, address:document.getElementById('rf-address').value };
+  if(!data.name){ toast('Nama wajib diisi','error'); return; }
+  if(id){ Object.assign(DB.resellers.find(x=>x.id===id), data); } else { DB.resellers.push({ id:uid('rs'), status:'active', ...data }); }
+  saveDB(); closeModal(); renderResellerTable(); toast('Reseller tersimpan','success');
+}
+function toggleResellerStatus(id){ const r=DB.resellers.find(x=>x.id===id); r.status=r.status==='active'?'inactive':'active'; saveDB(); renderResellerTable(); }
+function deleteReseller(id){ confirmAction('Hapus Reseller','Reseller ini akan dihapus dari daftar.', ()=>{ DB.resellers=DB.resellers.filter(x=>x.id!==id); saveDB(); renderResellerTable(); toast('Dihapus','success'); }); }
+
+/* ================================================================
+   CABANG
+================================================================ */
+function renderCabang(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3></div>`;
+  return `<div class="toolbar"><div class="grow"></div><button class="btn primary" onclick="openBranchForm()">+ Tambah Cabang</button></div>
+  <div class="card"><div class="table-wrap" id="branch-table-wrap"></div></div>`;
+}
+function renderBranchTable(){
+  const wrap = document.getElementById('branch-table-wrap'); if(!wrap) return;
+  wrap.innerHTML = `<table><thead><tr><th>Nama Cabang</th><th>Alamat</th><th>PJ</th><th>Total Penjualan</th><th>Total Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+  ${DB.branches.map(b=>{
+    const totalSales = DB.sales.filter(s=>s.branchId===b.id).reduce((a,s)=>a+s.total,0);
+    const totalStock = DB.products.reduce((a,p)=>a+(p.stock[b.id]||0),0);
+    return `<tr><td><b>${escapeHtml(b.name)}</b></td><td class="muted">${escapeHtml(b.address)}</td><td>${escapeHtml(b.pic)}</td><td>${fmtIDR(totalSales)}</td><td>${totalStock}</td>
+    <td><span class="badge ${b.status==='active'?'ok':'neutral'}">${b.status==='active'?'Aktif':'Nonaktif'}</span></td>
+    <td class="row gap-8"><button class="btn sm ghost" onclick="viewBranchDetail('${b.id}')">👁</button><button class="btn sm ghost" onclick="openBranchForm('${b.id}')">✏</button><button class="btn sm ghost" onclick="toggleBranchStatus('${b.id}')">${b.status==='active'?'⏸':'▶'}</button></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+function openBranchForm(id){
+  const b = id? DB.branches.find(x=>x.id===id): null;
+  openModal(`<div class="modal-head"><h3>${b?'Edit':'Tambah'} Cabang</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="field"><label>Nama Cabang</label><input id="bf-name" value="${b?escapeHtml(b.name):''}"></div>
+    <div class="field"><label>Alamat</label><input id="bf-address" value="${b?escapeHtml(b.address):''}"></div>
+    <div class="field-row">
+      <div class="field"><label>Kontak</label><input id="bf-contact" value="${b?escapeHtml(b.contact):''}"></div>
+      <div class="field"><label>Penanggung Jawab</label><input id="bf-pic" value="${b?escapeHtml(b.pic):''}"></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="saveBranch(${b?`'${b.id}'`:'null'})">Simpan</button></div>`);
+}
+function saveBranch(id){
+  const data = { name:document.getElementById('bf-name').value.trim(), address:document.getElementById('bf-address').value, contact:document.getElementById('bf-contact').value, pic:document.getElementById('bf-pic').value };
+  if(!data.name){ toast('Nama cabang wajib diisi','error'); return; }
+  if(id){ Object.assign(DB.branches.find(x=>x.id===id), data); }
+  else { const nb = { id:uid('br'), status:'active', ...data }; DB.branches.push(nb); DB.products.forEach(p=> p.stock[nb.id]=0); }
+  saveDB(); closeModal(); renderBranchTable(); toast('Cabang tersimpan','success');
+}
+function toggleBranchStatus(id){
+  const b = DB.branches.find(x=>x.id===id);
+  if(b.status==='active' && DB.branches.filter(x=>x.status==='active').length<=1){ toast('Minimal 1 cabang harus aktif','error'); return; }
+  b.status = b.status==='active'?'inactive':'active'; saveDB(); renderBranchTable();
+  if(SESSION.activeBranch===id && b.status==='inactive'){ SESSION.activeBranch = DB.branches.find(x=>x.status==='active').id; saveSession(true); updateBranchPill(); }
+}
+function viewBranchDetail(id){
+  const b = DB.branches.find(x=>x.id===id);
+  const sales = DB.sales.filter(s=>s.branchId===id);
+  const purchases = DB.purchases.filter(p=>p.branchId===id);
+  openModal(`<div class="modal-head"><h3>${escapeHtml(b.name)}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="kv" style="margin-bottom:14px;">
+      <div class="k">Alamat</div><div>${escapeHtml(b.address)}</div>
+      <div class="k">Kontak</div><div>${escapeHtml(b.contact)}</div>
+      <div class="k">PJ</div><div>${escapeHtml(b.pic)}</div>
+    </div>
+    <div class="grid-stats">
+      <div class="card stat-card"><div class="lbl">Total Penjualan</div><div class="val" style="font-size:17px;">${fmtIDR(sales.reduce((a,s)=>a+s.total,0))}</div></div>
+      <div class="card stat-card"><div class="lbl">Total Transaksi</div><div class="val" style="font-size:17px;">${sales.length}</div></div>
+      <div class="card stat-card"><div class="lbl">Total Pembelian</div><div class="val" style="font-size:17px;">${fmtIDR(purchases.reduce((a,p)=>a+p.total,0))}</div></div>
+      <div class="card stat-card"><div class="lbl">Nilai Stok</div><div class="val" style="font-size:17px;">${fmtIDR(DB.products.reduce((a,p)=>a+(p.stock[id]||0)*p.buyPrice,0))}</div></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+}
+
+/* ================================================================
+   LAPORAN KEUANGAN
+================================================================ */
+let lapFilter = { branch:'ALL', granularity:'monthly', period:'month', from:'', to:'', year:new Date().getFullYear(), month:new Date().getMonth() };
+function renderLaporan(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3></div>`;
+  const years = [...new Set(DB.sales.map(s=>new Date(s.date).getFullYear()))]; if(!years.includes(new Date().getFullYear())) years.push(new Date().getFullYear());
+  return `
+  <div class="tabs">
+    <div class="tab active" data-lt="ringkasan" onclick="switchLapTab('ringkasan')">Ringkasan</div>
+    <div class="tab" data-lt="penjualan" onclick="switchLapTab('penjualan')">Daftar Penjualan</div>
+    <div class="tab" data-lt="laba" onclick="switchLapTab('laba')">Laporan Laba</div>
+    <div class="tab" data-lt="pembelian" onclick="switchLapTab('pembelian')">Laporan Pembelian</div>
+    <div class="tab" data-lt="stok" onclick="switchLapTab('stok')">Laporan Stok</div>
+    <div class="tab" data-lt="cabang" onclick="switchLapTab('cabang')">Perbandingan Cabang</div>
+  </div>
+  <div class="filters-bar">
+    <select id="lap-branch" onchange="lapFilter.branch=this.value; renderLapTab();"><option value="ALL">Semua Cabang</option>${DB.branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('')}</select>
+    <select id="lap-granularity" onchange="lapFilter.granularity=this.value; renderLapTab();">
+      <option value="daily">Harian</option><option value="weekly">Mingguan</option><option value="monthly" selected>Bulanan</option><option value="yearly">Tahunan</option><option value="custom">Rentang Tanggal</option>
+    </select>
+    <input type="date" id="lap-from" class="hidden" onchange="lapFilter.from=this.value; renderLapTab();">
+    <input type="date" id="lap-to" class="hidden" onchange="lapFilter.to=this.value; renderLapTab();">
+    <select id="lap-year" onchange="lapFilter.year=+this.value; renderLapTab();">${years.sort().map(y=>`<option value="${y}" ${y===lapFilter.year?'selected':''}>${y}</option>`).join('')}</select>
+    <button class="btn sm" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn sm" onclick="window.print()">🖨 Cetak</button>
+  </div>
+  <div id="lap-content"></div>`;
+}
+function initLaporan(){ if(isOwner()) renderLapTab(); }
+function switchLapTab(t){
+  document.querySelectorAll('#content .tab').forEach(el=>el.classList.toggle('active', el.dataset.lt===t));
+  lapFilter.tab = t; renderLapTab();
+}
+function toggleCustomDates(){
+  const isCustom = lapFilter.granularity==='custom';
+  document.getElementById('lap-from').classList.toggle('hidden', !isCustom);
+  document.getElementById('lap-to').classList.toggle('hidden', !isCustom);
+}
+function lapPeriodMap(){ return { daily:'today', weekly:'week', monthly:'month', yearly:'year', custom:'custom' }[lapFilter.granularity]; }
+function renderLapTab(){
+  toggleCustomDates();
+  lapFilter.tab = lapFilter.tab || 'ringkasan';
+  const el = document.getElementById('lap-content'); if(!el) return;
+  const {branch} = lapFilter;
+  const period = lapPeriodMap();
+  const list = filterSales(branch, period, lapFilter.from, lapFilter.to);
+  const purchList = DB.purchases.filter(p=>{
+    const {from,to} = periodRange(period, lapFilter.from, lapFilter.to);
+    const d = new Date(p.date); return (branch==='ALL'||p.branchId===branch) && d>=from && d<=to;
+  });
+
+  if(lapFilter.tab==='ringkasan'){
+    const avgTx = list.length? salesTotal(list)/list.length : 0;
+    const prodQty={}; list.forEach(s=>s.items.forEach(i=>prodQty[i.productId]=(prodQty[i.productId]||0)+i.qty));
+    const topP = Object.entries(prodQty).sort((a,b)=>b[1]-a[1])[0];
+    const byBranch={}; list.forEach(s=>byBranch[s.branchId]=(byBranch[s.branchId]||0)+s.total);
+    const topBranchId = Object.entries(byBranch).sort((a,b)=>b[1]-a[1])[0];
+    el.innerHTML = `
+    <div class="grid-stats">
+      <div class="card stat-card"><div class="lbl">Total Omset</div><div class="val">${fmtIDR(salesTotal(list))}</div></div>
+      <div class="card stat-card"><div class="lbl">Total Transaksi</div><div class="val">${list.length}</div></div>
+      <div class="card stat-card"><div class="lbl">Produk Terjual</div><div class="val">${itemsSoldCount(list)}</div></div>
+      <div class="card stat-card"><div class="lbl">Total Diskon</div><div class="val">${fmtIDR(list.reduce((a,s)=>a+(s.discountTotal||0),0))}</div></div>
+      <div class="card stat-card"><div class="lbl">Rata-rata / Transaksi</div><div class="val">${fmtIDR(avgTx)}</div></div>
+      <div class="card stat-card"><div class="lbl">Produk Terlaris</div><div class="val" style="font-size:15px;">${topP? escapeHtml((DB.products.find(p=>p.id===topP[0])||{}).name||'—') : '—'}</div></div>
+      <div class="card stat-card"><div class="lbl">Cabang Omset Tertinggi</div><div class="val" style="font-size:15px;">${topBranchId? escapeHtml((DB.branches.find(b=>b.id===topBranchId[0])||{}).name||'—') : '—'}</div></div>
+    </div>`;
+  } else if(lapFilter.tab==='penjualan'){
+    // group by granularity bucket
+    const buckets = {};
+    list.forEach(s=>{
+      const d = new Date(s.date); let key;
+      if(lapFilter.granularity==='daily'||lapFilter.granularity==='custom') key = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+      else if(lapFilter.granularity==='weekly'){ const onejan=new Date(d.getFullYear(),0,1); const week=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7); key='Minggu '+week+' · '+d.getFullYear(); }
+      else if(lapFilter.granularity==='monthly') key = d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+      else key = String(d.getFullYear());
+      const bk = key+'|'+s.branchId;
+      if(!buckets[bk]) buckets[bk]={ key, branchId:s.branchId, count:0, qty:0, omset:0, disc:0, profit:0 };
+      buckets[bk].count++; buckets[bk].qty += s.items.reduce((a,i)=>a+i.qty,0); buckets[bk].omset += s.total; buckets[bk].disc += (s.discountTotal||0);
+      buckets[bk].profit += s.items.reduce((a,i)=>{ const prod=DB.products.find(x=>x.id===i.productId); return a+((i.price-(prod?prod.buyPrice:0))*i.qty); },0) - (s.discountTotal||0);
+    });
+    const rows = Object.values(buckets).sort((a,b)=> a.key<b.key?1:-1);
+    el.innerHTML = rows.length ? `<div class="card"><div class="table-wrap"><table><thead><tr><th>Periode</th><th>Cabang</th><th>Transaksi</th><th>Produk Terjual</th><th>Omset</th><th>Diskon</th><th>Laba Kotor</th></tr></thead><tbody>
+    ${rows.map(r=>{ const br=DB.branches.find(b=>b.id===r.branchId); return `<tr><td>${r.key}</td><td>${br?br.name:''}</td><td>${r.count}</td><td>${r.qty}</td><td>${fmtIDR(r.omset)}</td><td>${fmtIDR(r.disc)}</td><td>${fmtIDR(r.profit)}</td></tr>`; }).join('')}
+    </tbody></table></div></div>` : `<div class="empty-state"><div class="glyph">📈</div>Tidak ada data penjualan pada periode ini</div>`;
+  } else if(lapFilter.tab==='laba'){
+    const revenue = salesTotal(list);
+    const cogs = list.reduce((a,s)=> a + s.items.reduce((b,i)=>{ const p=DB.products.find(x=>x.id===i.productId); return b+(p?p.buyPrice:0)*i.qty; },0), 0);
+    const grossProfit = revenue - cogs;
+    const purchCost = purchList.reduce((a,p)=>a+p.total,0);
+    const shipping = purchList.reduce((a,p)=>a+p.shipping,0);
+    const netEst = grossProfit - shipping;
+    el.innerHTML = `<div class="card pad-20" style="max-width:520px;">
+      <div class="sum-line"><span>Pendapatan Penjualan</span><b>${fmtIDR(revenue)}</b></div>
+      <div class="sum-line"><span>Modal Barang Terjual (HPP)</span><b>-${fmtIDR(cogs)}</b></div>
+      <div class="sum-line total"><span>Laba Kotor</span><b>${fmtIDR(grossProfit)}</b></div>
+      <div style="height:14px;"></div>
+      <div class="sum-line"><span>Biaya Pembelian (periode)</span><b>${fmtIDR(purchCost)}</b></div>
+      <div class="sum-line"><span>Ongkos Kirim Pembelian</span><b>${fmtIDR(shipping)}</b></div>
+      <div class="sum-line total"><span>Laba Bersih Estimasi</span><b>${fmtIDR(netEst)}</b></div>
+    </div>`;
+  } else if(lapFilter.tab==='pembelian'){
+    const byDist = {}; purchList.forEach(p=>byDist[p.distributorId]=(byDist[p.distributorId]||0)+p.total);
+    const topDist = Object.entries(byDist).sort((a,b)=>b[1]-a[1])[0];
+    const prodQty={}; purchList.forEach(p=>p.items.forEach(i=>prodQty[i.productId]=(prodQty[i.productId]||0)+i.qty));
+    const topProd = Object.entries(prodQty).sort((a,b)=>b[1]-a[1])[0];
+    const byBranch={}; purchList.forEach(p=>byBranch[p.branchId]=(byBranch[p.branchId]||0)+p.total);
+    el.innerHTML = `
+    <div class="grid-stats">
+      <div class="card stat-card"><div class="lbl">Total Pembelian</div><div class="val">${fmtIDR(purchList.reduce((a,p)=>a+p.total,0))}</div></div>
+      <div class="card stat-card"><div class="lbl">Jumlah Transaksi</div><div class="val">${purchList.length}</div></div>
+      <div class="card stat-card"><div class="lbl">Distributor Terbesar</div><div class="val" style="font-size:15px;">${topDist? escapeHtml((DB.distributors.find(d=>d.id===topDist[0])||{}).name||'—'):'—'}</div></div>
+      <div class="card stat-card"><div class="lbl">Produk Terbanyak Dibeli</div><div class="val" style="font-size:15px;">${topProd? escapeHtml((DB.products.find(p=>p.id===topProd[0])||{}).name||'—'):'—'}</div></div>
+    </div>
+    <div class="section-title">Pembelian per Cabang</div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>Cabang</th><th>Total Pembelian</th></tr></thead><tbody>
+    ${DB.branches.map(b=>`<tr><td>${b.name}</td><td>${fmtIDR(byBranch[b.id]||0)}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  } else if(lapFilter.tab==='stok'){
+    const active = DB.products.filter(p=>p.status==='active');
+    const scope = branch;
+    const stockValue = active.reduce((a,p)=>a+productStock(p,scope)*p.buyPrice,0);
+    const totalStock = active.reduce((a,p)=>a+productStock(p,scope),0);
+    const low = active.filter(p=>stockStatus(productStock(p,scope),p.minStock)==='menipis');
+    const out = active.filter(p=>stockStatus(productStock(p,scope),p.minStock)==='habis');
+    const notMoving = active.filter(p=> !DB.sales.some(s=>(scope==='ALL'||s.branchId===scope) && s.items.some(i=>i.productId===p.id)));
+    const topValue = [...active].sort((a,b)=> productStock(b,scope)*b.buyPrice - productStock(a,scope)*a.buyPrice).slice(0,5);
+    el.innerHTML = `
+    <div class="grid-stats">
+      <div class="card stat-card"><div class="lbl">Nilai Persediaan</div><div class="val">${fmtIDR(stockValue)}</div></div>
+      <div class="card stat-card"><div class="lbl">Total Stok</div><div class="val">${totalStock}</div></div>
+      <div class="card stat-card"><div class="lbl">Stok Menipis</div><div class="val">${low.length}</div></div>
+      <div class="card stat-card"><div class="lbl">Stok Habis</div><div class="val">${out.length}</div></div>
+    </div>
+    <div class="two-col" style="margin-top:16px;">
+      <div class="card pad-16"><h3 style="margin-bottom:10px;">Produk Tidak Bergerak</h3>${notMoving.length? notMoving.slice(0,8).map(p=>`<div class="item" style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border-soft);">${escapeHtml(p.name)}<span class="muted">${productStock(p,scope)} ${p.unit}</span></div>`).join('') : '<p class="muted">Semua produk pernah terjual pada periode ini.</p>'}</div>
+      <div class="card pad-16"><h3 style="margin-bottom:10px;">Nilai Stok Terbesar</h3>${topValue.map(p=>`<div class="item" style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border-soft);">${escapeHtml(p.name)}<b>${fmtIDR(productStock(p,scope)*p.buyPrice)}</b></div>`).join('')}</div>
+    </div>`;
+  } else if(lapFilter.tab==='cabang'){
+    el.innerHTML = `<div class="card"><div class="table-wrap"><table><thead><tr><th>Cabang</th><th>Omset</th><th>Transaksi</th><th>Laba Kotor</th><th>Total Pembelian</th><th>Nilai Stok</th></tr></thead><tbody>
+    ${DB.branches.map(b=>{
+      const bs = filterSales(b.id, period, lapFilter.from, lapFilter.to);
+      const bp = DB.purchases.filter(p=>{ const {from,to}=periodRange(period, lapFilter.from, lapFilter.to); const d=new Date(p.date); return p.branchId===b.id && d>=from && d<=to; });
+      const stockVal = DB.products.reduce((a,p)=>a+(p.stock[b.id]||0)*p.buyPrice,0);
+      return `<tr><td><b>${b.name}</b></td><td>${fmtIDR(salesTotal(bs))}</td><td>${bs.length}</td><td>${fmtIDR(salesProfit(bs))}</td><td>${fmtIDR(bp.reduce((a,p)=>a+p.total,0))}</td><td>${fmtIDR(stockVal)}</td></tr>`;
+    }).join('')}</tbody></table></div></div>`;
+  }
+}
+function exportCSV(){
+  const {branch} = lapFilter; const period = lapPeriodMap();
+  const list = filterSales(branch, period, lapFilter.from, lapFilter.to);
+  let csv = 'Tanggal,Cabang,Total,Diskon,Metode Bayar\n';
+  list.forEach(s=>{ const br=DB.branches.find(b=>b.id===s.branchId); csv += `${fmtDateID(s.date)},${br?br.name:''},${s.total},${s.discountTotal||0},${s.paymentMethod}\n`; });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'laporan-penjualan-raja-tobacco.csv'; a.click();
+  toast('File CSV diunduh','success');
+}
+
+/* ================================================================
+   PENGATURAN
+================================================================ */
+function renderPengaturan(){
+  if(!isOwner()) return `<div class="access-denied"><div style="font-size:34px;">🔒</div><h3>Akses Terbatas</h3></div>`;
+  const s = DB.settings;
+  return `
+  <div class="tabs">
+    <div class="tab active" data-pt="profil" onclick="switchPengTab('profil')">Profil Perusahaan</div>
+    <div class="tab" data-pt="sistem" onclick="switchPengTab('sistem')">Sistem</div>
+    <div class="tab" data-pt="user" onclick="switchPengTab('user')">Kelola User</div>
+    <div class="tab" data-pt="data" onclick="switchPengTab('data')">Backup / Restore</div>
+  </div>
+  <div id="peng-content"></div>`;
+}
+function switchPengTab(t){
+  document.querySelectorAll('#content .tab').forEach(el=>el.classList.toggle('active', el.dataset.pt===t));
+  const el = document.getElementById('peng-content'); const s = DB.settings;
+  if(t==='profil'){
+    el.innerHTML = `<div class="card pad-20" style="max-width:560px;">
+      <div class="field"><label>Nama Usaha</label><input id="set-name" value="${escapeHtml(s.companyName)}"></div>
+      <div class="field"><label>Alamat</label><input id="set-address" value="${escapeHtml(s.address)}"></div>
+      <div class="field-row">
+        <div class="field"><label>Nomor Telepon</label><input id="set-phone" value="${escapeHtml(s.phone)}"></div>
+        <div class="field"><label>Email</label><input id="set-email" value="${escapeHtml(s.email)}"></div>
+      </div>
+      <div class="field"><label>Catatan Internal</label><textarea id="set-notes" rows="3">${escapeHtml(s.notes||'')}</textarea></div>
+      <button class="btn primary" onclick="saveProfileSettings()">Simpan Profil</button>
+    </div>`;
+  } else if(t==='sistem'){
+    el.innerHTML = `<div class="card pad-20" style="max-width:560px;">
+      <div class="field"><label>Cabang Default saat Login Owner</label><select id="set-defbranch">${DB.branches.map(b=>`<option value="${b.id}" ${s.defaultBranch===b.id?'selected':''}>${b.name}</option>`).join('')}</select></div>
+      <div class="check-row" style="margin-bottom:14px;"><input type="checkbox" id="set-lownotif" ${s.lowStockNotif?'checked':''}><label style="margin:0;">Aktifkan notifikasi stok menipis saat transaksi disimpan</label></div>
+      <p class="muted" style="font-size:12px;">Format mata uang: Rupiah (IDR) · Format tanggal: Indonesia — diterapkan otomatis di seluruh sistem.</p>
+      <button class="btn primary" onclick="saveSystemSettings()">Simpan Pengaturan</button>
+    </div>`;
+  } else if(t==='user'){
+    el.innerHTML = `<div class="toolbar"><div class="grow"></div><button class="btn primary sm" onclick="openUserForm()">+ Tambah User</button></div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Cabang</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+    ${DB.users.map(u=>{ const br=DB.branches.find(b=>b.id===u.branchId);
+      return `<tr><td><b>${escapeHtml(u.name)}</b></td><td>${escapeHtml(u.username)}</td><td><span class="badge ${u.role==='owner'?'ok':'neutral'}">${u.role==='owner'?'Owner':'Kasir'}</span></td><td>${br?escapeHtml(br.name):'Semua'}</td>
+      <td><span class="badge ${u.status==='active'?'ok':'neutral'}">${u.status==='active'?'Aktif':'Nonaktif'}</span></td>
+      <td class="row gap-8"><button class="btn sm ghost" onclick="openUserForm('${u.id}')">✏</button><button class="btn sm ghost" onclick="toggleUserStatus('${u.id}')">${u.status==='active'?'⏸':'▶'}</button>${DB.users.length>1?`<button class="btn sm ghost" onclick="deleteUser('${u.id}')">🗑</button>`:''}</td></tr>`;
+    }).join('')}</tbody></table></div></div>`;
+  } else if(t==='data'){
+    el.innerHTML = `<div class="card pad-20" style="max-width:560px;">
+      <h3 style="margin-bottom:6px;">Backup Data</h3>
+      <p class="muted" style="font-size:12.5px; margin:0 0 12px;">Unduh seluruh data sistem (produk, transaksi, cabang, dsb) dalam format JSON.</p>
+      <button class="btn" onclick="backupData()">⬇ Unduh Backup (.json)</button>
+      <hr style="margin:22px 0; border:none; border-top:1px solid var(--border);">
+      <h3 style="margin-bottom:6px;">Restore Data</h3>
+      <p class="muted" style="font-size:12.5px; margin:0 0 12px;">Unggah file backup JSON untuk memulihkan data. Data saat ini akan digantikan.</p>
+      <input type="file" id="restore-file" accept="application/json">
+      <button class="btn danger" style="margin-top:10px;" onclick="restoreData()">Pulihkan Data</button>
+    </div>`;
+  }
+}
+function saveProfileSettings(){
+  Object.assign(DB.settings, { companyName:document.getElementById('set-name').value, address:document.getElementById('set-address').value, phone:document.getElementById('set-phone').value, email:document.getElementById('set-email').value, notes:document.getElementById('set-notes').value });
+  saveDB(); toast('Profil perusahaan disimpan','success');
+}
+function saveSystemSettings(){
+  DB.settings.defaultBranch = document.getElementById('set-defbranch').value;
+  DB.settings.lowStockNotif = document.getElementById('set-lownotif').checked;
+  saveDB(); toast('Pengaturan sistem disimpan','success');
+}
+function openUserForm(id){
+  const u = id? DB.users.find(x=>x.id===id): null;
+  openModal(`<div class="modal-head"><h3>${u?'Edit':'Tambah'} User</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="field"><label>Nama Lengkap</label><input id="uf-name" value="${u?escapeHtml(u.name):''}"></div>
+    <div class="field-row">
+      <div class="field"><label>Username</label><input id="uf-user" value="${u?escapeHtml(u.username):''}"></div>
+      <div class="field"><label>Password</label><input id="uf-pass" type="text" placeholder="${u?'Kosongkan jika tidak diubah':''}"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Role</label><select id="uf-role" onchange="document.getElementById('uf-branch-wrap').style.display=this.value==='kasir'?'block':'none';"><option value="owner" ${u&&u.role==='owner'?'selected':''}>Owner</option><option value="kasir" ${u&&u.role==='kasir'?'selected':''}>Staff Kasir</option></select></div>
+      <div class="field" id="uf-branch-wrap" style="display:${(!u||u.role==='kasir')?'block':'none'};"><label>Cabang</label><select id="uf-branch">${DB.branches.map(b=>`<option value="${b.id}" ${u&&u.branchId===b.id?'selected':''}>${b.name}</option>`).join('')}</select></div>
+    </div>
+  </div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="saveUser(${u?`'${u.id}'`:'null'})">Simpan</button></div>`);
+}
+function saveUser(id){
+  const name = document.getElementById('uf-name').value.trim();
+  const username = document.getElementById('uf-user').value.trim();
+  const pass = document.getElementById('uf-pass').value;
+  const role = document.getElementById('uf-role').value;
+  const branchId = role==='kasir' ? document.getElementById('uf-branch').value : null;
+  if(!name || !username){ toast('Nama dan username wajib diisi','error'); return; }
+  if(DB.users.some(u=>u.username===username && u.id!==id)){ toast('Username sudah digunakan','error'); return; }
+  if(id){
+    const u = DB.users.find(x=>x.id===id); Object.assign(u, { name, username, role, branchId }); if(pass) u.password = pass;
+  } else {
+    if(!pass){ toast('Password wajib diisi untuk user baru','error'); return; }
+    DB.users.push({ id:uid('u'), name, username, password:pass, role, branchId, status:'active' });
+  }
+  saveDB(); closeModal(); switchPengTab('user'); toast('User tersimpan','success');
+}
+function toggleUserStatus(id){ const u=DB.users.find(x=>x.id===id); u.status=u.status==='active'?'inactive':'active'; saveDB(); switchPengTab('user'); }
+function deleteUser(id){ confirmAction('Hapus User','User ini akan dihapus dari sistem.', ()=>{ DB.users=DB.users.filter(x=>x.id!==id); saveDB(); switchPengTab('user'); toast('User dihapus','success'); }); }
+function backupData(){
+  const blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup-raja-tobacco-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('Backup berhasil diunduh','success');
+}
+function restoreData(){
+  const file = document.getElementById('restore-file').files[0];
+  if(!file){ toast('Pilih file backup terlebih dahulu','error'); return; }
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{ const parsed = JSON.parse(e.target.result); DB = parsed; saveDB(); toast('Data berhasil dipulihkan','success'); go('pengaturan'); }
+    catch(err){ toast('File backup tidak valid','error'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ================================================================
+   POS / KASIR
+================================================================ */
+let cart = []; // {productId, qty, price, discount}
+let posCategory = 'ALL';
+let posSearch = '';
+let posPayment = 'Tunai';
+let posCashReceived = 0;
+let posCustomerType = 'umum';
+let posResellerId = '';
+let posNote = '';
+let selectedCartIdx = null;
+
+function renderPOS(){
+  const branch = activeBranchId();
+  const cats = ['ALL', ...DB.categories];
+  return `
+  <div id="view-pos-wrap">
+  <div class="pos-shell card" style="height:calc(100vh - 100px); overflow:hidden;">
+    <div class="pos-left">
+      <div class="pos-topbar">
+        <div class="pos-search"><span class="ic">🔍</span><input id="pos-search-input" placeholder="Cari nama produk / merek... (F1)" oninput="posSearch=this.value; renderPosProducts();"></div>
+        <button class="btn ghost icon" onclick="togglePosFullscreen()" title="Layar Penuh">⛶</button>
+      </div>
+      <div class="cat-chips" id="pos-cats">${cats.map(c=>`<div class="chip ${c===posCategory?'active':''}" onclick="posCategory='${c}'; renderPosProducts();">${c==='ALL'?'Semua':c}</div>`).join('')}</div>
+      <div class="pos-fav-strip" id="pos-fav-strip"></div>
+      <div class="pos-products" id="pos-products"></div>
+    </div>
+    <div class="pos-right">
+      <div class="pos-cust-row">
+        <select id="pos-cust-type" style="flex:1;" onchange="posCustomerType=this.value; posResellerId=''; renderPosRightPanel();">
+          <option value="umum" selected>Pelanggan Umum</option>
+          <option value="reseller">Reseller</option>
+        </select>
+        <select id="pos-reseller-sel" class="hidden" style="flex:1;" onchange="posResellerId=this.value;"></select>
+      </div>
+      <div class="pos-cart-head"><span>Keranjang</span><button class="btn sm ghost" onclick="clearCart()">Kosongkan</button></div>
+      <div class="pos-cart" id="pos-cart"></div>
+      <div class="pos-note"><input id="pos-note-input" placeholder="Catatan transaksi (mis: hutang, ambil besok)..." oninput="posNote=this.value;"></div>
+      <div class="pos-summary" id="pos-summary"></div>
+    </div>
+  </div>
+  </div>`;
+}
+function togglePosFullscreen(){
+  posFullscreen = !posFullscreen;
+  document.getElementById('view-pos-wrap')?.parentElement && document.body.classList.toggle('pos-fs-active', posFullscreen);
+  const wrap = document.querySelector('.content');
+}
+function initPOS(){
+  // restore draft
+  const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+  if(draft && draft.branch===activeBranchId() && draft.cart && draft.cart.length){
+    openModal(`<div class="modal-head"><h3>Lanjutkan Transaksi?</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body"><p>Ditemukan transaksi yang belum selesai (${draft.cart.length} item). Lanjutkan atau mulai baru?</p></div>
+    <div class="modal-foot"><button class="btn" onclick="discardDraft()">Mulai Baru</button><button class="btn primary" onclick="restoreDraft()">Lanjutkan</button></div>`);
+  }
+  renderPosProducts(); renderPosFavStrip(); renderPosRightPanel();
+  setTimeout(()=> document.getElementById('pos-search-input') && document.getElementById('pos-search-input').focus(), 50);
+  document.onkeydown = posKeyHandler;
+}
+function discardDraft(){ localStorage.removeItem(DRAFT_KEY); closeModal(); }
+function restoreDraft(){ const draft = JSON.parse(localStorage.getItem(DRAFT_KEY)); cart = draft.cart; posNote = draft.note||''; posCustomerType = draft.customerType||'umum'; posResellerId = draft.resellerId||''; closeModal(); renderPosProducts(); renderPosRightPanel(); }
+function saveDraft(){ localStorage.setItem(DRAFT_KEY, JSON.stringify({ branch:activeBranchId(), cart, note:posNote, customerType:posCustomerType, resellerId:posResellerId })); }
+
+function posKeyHandler(e){
+  if(currentView!=='pos') { document.onkeydown=null; return; }
+  if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA'){
+    if(e.key==='Escape'){ e.target.value=''; if(e.target.id==='pos-search-input'){ posSearch=''; renderPosProducts(); } }
+    if(e.key==='F2'){ e.preventDefault(); saveSale(); }
+    if(e.key==='F3'){ e.preventDefault(); newTransaction(); }
+    return;
+  }
+  if(e.key==='F1'){ e.preventDefault(); document.getElementById('pos-search-input').focus(); }
+  if(e.key==='F2'){ e.preventDefault(); saveSale(); }
+  if(e.key==='F3'){ e.preventDefault(); newTransaction(); }
+  if(e.key==='F4'){ e.preventDefault(); document.querySelector('.pay-methods .btn')?.focus(); }
+  if(e.key==='Delete' && selectedCartIdx!==null){ removeCartItem(selectedCartIdx); }
+}
+function renderPosFavStrip(){
+  const branch = activeBranchId();
+  const favs = DB.products.filter(p=>p.favorite && p.status==='active');
+  document.getElementById('pos-fav-strip').innerHTML = favs.map(p=>`<div class="fav-card" onclick="quickAdd('${p.id}')">⭐<br>${escapeHtml(p.name)}<br><span class="muted">${fmtIDR(p.sellPrice)}</span></div>`).join('') || '';
+}
+function renderPosProducts(){
+  const branch = activeBranchId();
+  const grid = document.getElementById('pos-products'); if(!grid) return;
+  const s = posSearch.toLowerCase();
+  let list = DB.products.filter(p=>p.status==='active').filter(p=>{
+    const matchS = !s || p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s) || p.category.toLowerCase().includes(s);
+    const matchC = posCategory==='ALL' || p.category===posCategory;
+    return matchS && matchC;
+  });
+  list.sort((a,b)=> (b.favorite - a.favorite) || a.name.localeCompare(b.name));
+  if(!list.length){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="glyph">🔍</div>Produk tidak ditemukan</div>`; return; }
+  grid.innerHTML = list.map(p=>{
+    const stock = productStock(p, branch); const status = stockStatus(stock,p.minStock);
+    const inCart = cart.find(c=>c.productId===p.id);
+    return `<div class="prod-card" onclick="quickAdd('${p.id}')">
+      ${inCart? `<div class="qty-badge">${inCart.qty}</div>`:''}
+      <div class="pname">${escapeHtml(p.name)}</div>
+      <div class="pbrand">${escapeHtml(p.brand)} · ${escapeHtml(p.unit)}</div>
+      <div class="pprice">${fmtIDR(p.sellPrice)}</div>
+      <div class="pstock ${status==='habis'?'muted':''}">
+        ${status==='habis'? '<span class="badge danger">Habis</span>' : status==='menipis' ? `<span class="badge warn">Menipis · ${stock}</span>` : `<span class="muted">Stok: ${stock}</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+function quickAdd(pid){
+  const branch = activeBranchId();
+  const p = DB.products.find(x=>x.id===pid);
+  const stock = productStock(p, branch);
+  const existing = cart.find(c=>c.productId===pid);
+  const curQty = existing? existing.qty : 0;
+  if(curQty+1 > stock){ toast('Stok tidak mencukupi', 'error'); return; }
+  if(existing){ existing.qty++; } else { cart.push({ productId:pid, qty:1, price:p.sellPrice, discount:0 }); }
+  saveDraft(); renderPosProducts(); renderPosCart(); renderPosSummary();
+}
+function renderPosRightPanel(){
+  document.getElementById('pos-cust-type').value = posCustomerType;
+  const selEl = document.getElementById('pos-reseller-sel');
+  const branch = activeBranchId();
+  const resellersInBranch = DB.resellers.filter(r=>r.status==='active' && (r.branchId===branch));
+  selEl.innerHTML = `<option value="">Pilih reseller...</option>` + resellersInBranch.map(r=>`<option value="${r.id}" ${posResellerId===r.id?'selected':''}>${escapeHtml(r.name)}</option>`).join('');
+  selEl.classList.toggle('hidden', posCustomerType!=='reseller');
+  document.getElementById('pos-note-input').value = posNote;
+  renderPosCart(); renderPosSummary();
+}
+function renderPosCart(){
+  const el = document.getElementById('pos-cart'); if(!el) return;
+  if(!cart.length){ el.innerHTML = `<div class="empty-state"><div class="glyph">🛒</div>Keranjang kosong<br><span style="font-size:11.5px;">Klik produk atau tekan <span class="kbd">F1</span> untuk mencari</span></div>`; return; }
+  el.innerHTML = cart.map((c,i)=>{
+    const p = DB.products.find(x=>x.id===c.productId);
+    const sub = c.qty*c.price - c.discount;
+    return `<div class="cart-item ${selectedCartIdx===i?'selected':''}" onclick="selectedCartIdx=${i};">
+      <div class="ci-info">
+        <div class="ci-name">${escapeHtml(p?p.name:'—')}</div>
+        <div class="ci-price">${fmtIDR(c.price)} ${c.discount?`· disk. ${fmtIDR(c.discount)}`:''} <span style="cursor:pointer; text-decoration:underline;" onclick="event.stopPropagation(); openItemDiscount(${i});">ubah</span></div>
+      </div>
+      <div class="qty-ctrl">
+        <button onclick="event.stopPropagation(); changeQty(${i},-1);">−</button>
+        <input value="${c.qty}" onclick="event.stopPropagation();" onchange="setQty(${i}, this.value)">
+        <button onclick="event.stopPropagation(); changeQty(${i},1);">+</button>
+      </div>
+      <div class="ci-sub">${fmtIDR(sub)}</div>
+      <div class="ci-del" onclick="event.stopPropagation(); removeCartItem(${i});">✕</div>
+    </div>`;
+  }).join('');
+}
+function changeQty(i, delta){
+  const c = cart[i]; const p = DB.products.find(x=>x.id===c.productId); const stock = productStock(p, activeBranchId());
+  const nq = c.qty+delta;
+  if(nq<=0){ removeCartItem(i); return; }
+  if(nq>stock){ toast('Stok tidak mencukupi','error'); return; }
+  c.qty = nq; saveDraft(); renderPosCart(); renderPosSummary(); renderPosProducts();
+}
+function setQty(i, val){
+  const q = Math.max(1, parseInt(val)||1); const c=cart[i]; const p=DB.products.find(x=>x.id===c.productId); const stock=productStock(p,activeBranchId());
+  c.qty = Math.min(q, stock); saveDraft(); renderPosCart(); renderPosSummary(); renderPosProducts();
+}
+function removeCartItem(i){ cart.splice(i,1); selectedCartIdx=null; saveDraft(); renderPosCart(); renderPosSummary(); renderPosProducts(); }
+function clearCart(){ if(!cart.length) return; confirmAction('Kosongkan Keranjang','Semua item pada keranjang akan dihapus.', ()=>{ cart=[]; saveDraft(); renderPosCart(); renderPosSummary(); renderPosProducts(); }); }
+function openItemDiscount(i){
+  const c = cart[i];
+  openModal(`<div class="modal-head"><h3>Diskon Item</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body"><div class="field"><label>Diskon (Rp)</label><input type="number" id="item-disc-input" value="${c.discount}"></div></div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="cart[${i}].discount=+document.getElementById('item-disc-input').value||0; saveDraft(); renderPosCart(); renderPosSummary(); closeModal();">Terapkan</button></div>`);
+}
+let posTxDiscount = 0;
+function renderPosSummary(){
+  const el = document.getElementById('pos-summary'); if(!el) return;
+  const subtotal = cart.reduce((a,c)=>a+c.qty*c.price,0);
+  const itemDisc = cart.reduce((a,c)=>a+c.discount,0);
+  const totalDisc = itemDisc + posTxDiscount;
+  const total = Math.max(0, subtotal - totalDisc);
+  const change = Math.max(0, posCashReceived - total);
+  el.innerHTML = `
+    <div class="sum-line"><span>Total Item</span><b>${cart.length}</b></div>
+    <div class="sum-line"><span>Total Qty</span><b>${cart.reduce((a,c)=>a+c.qty,0)}</b></div>
+    <div class="sum-line"><span>Subtotal</span><b>${fmtIDR(subtotal)}</b></div>
+    <div class="sum-line"><span>Diskon Transaksi <span style="cursor:pointer;text-decoration:underline;" onclick="openTxDiscount()">ubah</span></span><b>-${fmtIDR(totalDisc)}</b></div>
+    <div class="sum-line total"><span>Total Bayar</span><b>${fmtIDR(total)}</b></div>
+    <div class="pay-methods">
+      ${['Tunai','QRIS','Transfer'].map(m=>`<button class="btn sm ${posPayment===m?'active':''}" onclick="posPayment='${m}'; renderPosSummary();">${m}</button>`).join('')}
+    </div>
+    ${posPayment==='Tunai' ? `
+    <div class="field" style="margin-bottom:6px;"><label>Uang Diterima</label><input type="number" id="pos-cash-input" value="${posCashReceived||''}" oninput="posCashReceived=+this.value||0; renderPosSummary();"></div>
+    <div class="cash-quick">
+      <button class="btn sm" onclick="posCashReceived=${total}; renderPosSummary();">Pas</button>
+      ${[50000,100000,200000,500000].map(v=>`<button class="btn sm" onclick="posCashReceived=${v}; renderPosSummary();">${(v/1000)}rb</button>`).join('')}
+    </div>
+    <div class="sum-line"><span>Kembalian</span><b>${fmtIDR(change)}</b></div>` : ''}
+    <div class="pos-actions">
+      <button class="btn" onclick="clearCart()">Kosongkan <span class="kbd">Del</span></button>
+      <button class="btn primary" onclick="saveSale()">Simpan <span class="kbd">F2</span></button>
+    </div>
+  `;
+}
+function openTxDiscount(){
+  openModal(`<div class="modal-head"><h3>Diskon Transaksi</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+  <div class="modal-body"><div class="field"><label>Diskon (Rp)</label><input type="number" id="tx-disc-input" value="${posTxDiscount}"></div></div>
+  <div class="modal-foot"><button class="btn" onclick="closeModal()">Batal</button><button class="btn primary" onclick="posTxDiscount=+document.getElementById('tx-disc-input').value||0; renderPosSummary(); closeModal();">Terapkan</button></div>`);
+}
+function newTransaction(){
+  if(cart.length){ confirmAction('Transaksi Baru','Keranjang saat ini akan dikosongkan tanpa disimpan. Lanjutkan?', doNewTransaction); }
+  else doNewTransaction();
+}
+function doNewTransaction(){ cart=[]; posTxDiscount=0; posCashReceived=0; posNote=''; posCustomerType='umum'; posResellerId=''; localStorage.removeItem(DRAFT_KEY); renderPosProducts(); renderPosRightPanel(); }
+function saveSale(){
+  if(!cart.length){ toast('Keranjang masih kosong','error'); return; }
+  const branch = activeBranchId();
+  const subtotal = cart.reduce((a,c)=>a+c.qty*c.price,0);
+  const itemDisc = cart.reduce((a,c)=>a+c.discount,0);
+  const discountTotal = itemDisc+posTxDiscount;
+  const total = Math.max(0, subtotal-discountTotal);
+  if(posPayment==='Tunai' && posCashReceived < total){ toast('Uang diterima kurang dari total bayar','error'); return; }
+  const user = currentUser();
+  const sale = {
+    id:uid('s'), date:todayISO(), branchId:branch, userId:user.id, items:cart.map(c=>({...c})),
+    discountTotal, subtotal, total, paymentMethod:posPayment, cashReceived: posPayment==='Tunai'?posCashReceived:total,
+    change: posPayment==='Tunai'? Math.max(0,posCashReceived-total):0, customerType:posCustomerType, resellerId: posCustomerType==='reseller'?posResellerId:null, note:posNote
+  };
+  cart.forEach(c=>{ const p = DB.products.find(x=>x.id===c.productId); p.stock[branch] = Math.max(0,(p.stock[branch]||0)-c.qty); logStock(c.productId, branch, 'sale', -c.qty, 'Penjualan POS', sale.id); });
+  DB.sales.push(sale); saveDB(); localStorage.removeItem(DRAFT_KEY);
+  toast('Transaksi tersimpan — '+fmtIDR(total), 'success');
+  // low stock alert
+  cart.forEach(c=>{
+    const p = DB.products.find(x=>x.id===c.productId); const st = p.stock[branch];
+    if(DB.settings.lowStockNotif){
+      if(st<=0) toast(`Stok ${p.name} telah habis`, 'error');
+      else if(st<=p.minStock) toast(`Stok ${p.name} tersisa ${st} ${p.unit}`, 'error');
+    }
+  });
+  doNewTransaction();
+}
+
+/* ================================================================
+   GLOBAL SEARCH
+================================================================ */
+function globalSearch(q){
+  q = q.trim().toLowerCase();
+  if(!q) return;
+  // simple: if match found, could jump; keep unobtrusive (no dropdown to keep this lightweight)
+}
+
+/* ================================================================
+   BOOT
+================================================================ */
+function enterApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('active');
+  applyTheme(); initSwatches(); updateBranchPill(); renderNav();
+  const u = currentUser();
+  document.getElementById('user-avatar').textContent = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('user-name-lbl').textContent = u.name;
+  document.getElementById('user-role-lbl').textContent = u.role==='owner'?'Owner':'Staff Kasir';
+  go('dashboard');
+}
+window.addEventListener('DOMContentLoaded', ()=>{
+  loadDB(); loadSession();
+  initSwatches();
+  if(SESSION && DB.users.find(u=>u.id===SESSION.userId)){ enterApp(); }
+  else { applyTheme(); document.getElementById('login-screen').style.display='flex'; }
+  document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+});
+</script>
+</body>
+</html>
