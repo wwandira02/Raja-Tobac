@@ -421,11 +421,21 @@
 
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 let semuaData = [];
 let tempatAktif = 'Belilas';
 let jenisAktif = 'masuk';
 const KEY = 'entri_keuangan';
+
+const SUPABASE_URL = "PASTE_PROJECT_URL_DI_SINI";
+const SUPABASE_KEY = "PASTE_ANON_PUBLIC_KEY_DI_SINI";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const $ = (sel) => document.querySelector(sel);
 const formatRp = (n) => 'Rp' + Number(n).toLocaleString('id-ID');
