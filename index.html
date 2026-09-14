@@ -429,7 +429,7 @@ let tempatAktif = 'Belilas';
 let jenisAktif = 'masuk';
 const KEY = 'entri_keuangan';
 
-const SUPABASE_URL = "https://agrqwennrtbmbahwtzrr.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://agrqwennrtbmbahwtzrr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFncnF3ZW5ucnRibWJhaHd0enJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODMyODQsImV4cCI6MjEwNDk1OTI4NH0.Q2GlQ-SYSVth-AJVBGawqCpjg-mB2a5DWEcCyd5vbpU";
 
 const supabase = window.supabase.createClient(
@@ -458,29 +458,27 @@ async function tesSupabase() {
 tesSupabase();
 
 async function muatData(){
-  try{
-    const res = await window.storage.get(KEY, false);
-    semuaData = res && res.value ? JSON.parse(res.value) : [];
-  }catch(e){
-    semuaData = [];
+
+  const { data, error } = await supabase
+    .from('buku_kas')
+    .select('*');
+
+  if(error){
+    console.error(error);
+    setStatus('Gagal memuat data');
+    return;
   }
+
+  semuaData = data || [];
+
   render();
-  setStatus('Tersimpan otomatis · masuk dengan akun yang sama di device lain untuk lihat data ini');
+
+  setStatus('Data berhasil dimuat');
+
 }
 
 async function simpanData(){
-  try{
-    const res = await window.storage.set(KEY, JSON.stringify(semuaData), false);
-    if(!res){
-      setStatus('Gagal menyimpan, coba lagi.');
-      return false;
-    }
-    setStatus('Tersimpan otomatis · masuk dengan akun yang sama di device lain untuk lihat data ini');
-    return true;
-  }catch(e){
-    setStatus('Gagal menyimpan, coba lagi.');
-    return false;
-  }
+  return true;
 }
 
 function render(){
