@@ -429,8 +429,8 @@ let tempatAktif = 'Belilas';
 let jenisAktif = 'masuk';
 const KEY = 'entri_keuangan';
 
-const SUPABASE_URL = "PASTE_PROJECT_URL_DI_SINI";
-const SUPABASE_KEY = "PASTE_ANON_PUBLIC_KEY_DI_SINI";
+const SUPABASE_URL = "https://agrqwennrtbmbahwtzrr.supabase.co/rest/v1/";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFncnF3ZW5ucnRibWJhaHd0enJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODMyODQsImV4cCI6MjEwNDk1OTI4NH0.Q2GlQ-SYSVth-AJVBGawqCpjg-mB2a5DWEcCyd5vbpU";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
@@ -443,6 +443,19 @@ const formatRp = (n) => 'Rp' + Number(n).toLocaleString('id-ID');
 function setStatus(teks){
   $('#status').textContent = teks;
 }
+
+async function tesSupabase() {
+
+  const { data, error } = await supabase
+    .from('buku_kas')
+    .select('*');
+
+  console.log('DATA:', data);
+  console.log('ERROR:', error);
+
+}
+
+tesSupabase();
 
 async function muatData(){
   try{
